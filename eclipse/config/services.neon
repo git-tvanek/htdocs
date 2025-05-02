@@ -1,5 +1,36 @@
 services:
 	- App\Core\RouterFactory::createRouter
+	- App\Repository\AddonRepository
+    - App\Repository\AuthorRepository
+    - App\Repository\CategoryRepository
+    - App\Repository\ReviewRepository(@addonRepository)
+    - App\Repository\TagRepository
+
+	# Services
+    addonService:
+        factory: App\Service\AddonService(@addonRepository, %uploadsDir%)
+    authorService:
+        factory: App\Service\AuthorService(@authorRepository)
+    categoryService:
+        factory: App\Service\CategoryService(@categoryRepository)
+    reviewService:
+        factory: App\Service\ReviewService(@reviewRepository)
+    tagService:
+        factory: App\Service\TagService(@tagRepository)
+    statisticsService:
+        factory: App\Service\StatisticsService(
+            @addonRepository, 
+            @authorRepository, 
+            @categoryRepository, 
+            @reviewRepository, 
+            @database.default.explorer
+        )
+    searchService:
+        factory: App\Service\SearchService(
+            @addonRepository, 
+            @authorRepository, 
+            @tagRepository
+        )
 
 
 search:

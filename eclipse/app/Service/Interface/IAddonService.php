@@ -75,13 +75,13 @@ interface IAddonService extends IBaseService
      */
     public function search(string $query, int $page = 1, int $itemsPerPage = 10): PaginatedCollection;
     
-    /**
-     * Increment download count
-     * 
-     * @param int $id
-     * @return bool
-     */
-    public function incrementDownloadCount(int $id): bool;
+   /**
+ * Increment download count
+ * 
+ * @param int $id
+ * @return int
+ */
+    public function incrementDownloadCount(int $id): int;
     
     /**
      * Save addon with related data

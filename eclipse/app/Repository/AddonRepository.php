@@ -280,9 +280,9 @@ class AddonRepository extends BaseRepository implements AddonRepositoryInterface
      * @param Addon $addon
      * @param array $screenshots
      * @param array $tagIds
-     * @return bool
+     * @return int
      */
-    public function updateWithRelated(Addon $addon, array $screenshots = [], array $tagIds = []): bool
+    public function updateWithRelated(Addon $addon, array $screenshots = [], array $tagIds = []): int
     {
         // Update slug if name changed
         if (empty($addon->slug)) {
@@ -329,7 +329,7 @@ class AddonRepository extends BaseRepository implements AddonRepositoryInterface
             // Commit transaction
             $this->database->commit();
             
-            return true;
+            return $addon->id;
         } catch (\Exception $e) {
             // Rollback on error
             $this->database->rollBack();

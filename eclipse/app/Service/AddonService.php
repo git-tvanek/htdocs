@@ -136,16 +136,16 @@ class AddonService extends BaseService implements IAddonService
         return $this->addonRepository->search($query, $page, $itemsPerPage);
     }
     
-    /**
-     * Increment download count
-     * 
-     * @param int $id
-     * @return bool
-     */
-    public function incrementDownloadCount(int $id): bool
-    {
-        return $this->addonRepository->incrementDownloadCount($id) > 0;
-    }
+/**
+ * Increment download count
+ * 
+ * @param int $id
+ * @return int Number of affected rows
+ */
+public function incrementDownloadCount(int $id): int
+{
+    return $this->addonRepository->incrementDownloadCount($id);
+}
     
     /**
      * Save addon with related data
