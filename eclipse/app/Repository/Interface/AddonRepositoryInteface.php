@@ -120,7 +120,7 @@ interface AddonRepositoryInterface extends BaseRepositoryInterface
      * @param array $tagIds
      * @return bool
      */
-    public function updateWithRelated(Addon $addon, array $screenshots = [], array $tagIds = []): bool;
+    public function updateWithRelated(Addon $addon, array $screenshots = [], array $tagIds = []): int;
     
     /**
      * Získá doplněk s souvisejícími daty

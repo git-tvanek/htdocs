@@ -15,6 +15,7 @@ use App\Repository\Query\AddonAdvancedSearchQuery;
 use App\Repository\Query\AddonFilterQuery;
 use Nette\Database\Explorer;
 use Nette\Database\Table\Selection;
+use Nette\Http\FileUpload;
 use Nette\Utils\Strings;
 
 /**
@@ -274,68 +275,84 @@ class AddonRepository extends BaseRepository implements AddonRepositoryInterface
         }
     }
 
-    /**
-     * Update addon with related data
-     * 
-     * @param Addon $addon
-     * @param array $screenshots
-     * @param array $tagIds
-     * @return int
-     */
-    public function updateWithRelated(Addon $addon, array $screenshots = [], array $tagIds = []): int
-    {
-        // Update slug if name changed
-        if (empty($addon->slug)) {
-            $addon->slug = Strings::webalize($addon->name);
-        }
-        
-        // Set updated timestamp
-        $addon->updated_at = new \DateTime();
-        
-        // Begin transaction
-        $this->database->beginTransaction();
-        
-        try {
-            // Update addon
-            $this->save($addon);
-            
-            // Handle screenshots
-            if (!empty($screenshots)) {
-                // Remove existing screenshots
-                $this->database->table('screenshots')->where('addon_id', $addon->id)->delete();
-                
-                // Add new screenshots
-                foreach ($screenshots as $index => $screenshot) {
-                    $screenshot->addon_id = $addon->id;
-                    $screenshot->sort_order = $index;
-                    $this->database->table('screenshots')->insert($screenshot->toArray());
-                }
-            }
-            
-            // Handle tags
-            if (!empty($tagIds)) {
-                // Remove existing tag associations
-                $this->database->table('addon_tags')->where('addon_id', $addon->id)->delete();
-                
-                // Add new tag associations
-                foreach ($tagIds as $tagId) {
-                    $addonTag = new AddonTag();
-                    $addonTag->addon_id = $addon->id;
-                    $addonTag->tag_id = $tagId;
-                    $this->database->table('addon_tags')->insert($addonTag->toArray());
-                }
-            }
-            
-            // Commit transaction
-            $this->database->commit();
-            
-            return $addon->id;
-        } catch (\Exception $e) {
-            // Rollback on error
-            $this->database->rollBack();
-            throw $e;
-        }
+/**
+ * Update addon with related data
+ * 
+ * @param Addon $addon
+ * @param array $screenshots
+ * @param array $tagIds
+ * @return int
+ */
+public function updateWithRelated(Addon $addon, array $screenshots = [], array $tagIds = []): int
+{
+    // Ensure addon exists
+    if (!$this->exists($addon->id)) {
+        throw new \Exception("Addon with ID {$addon->id} does not exist.");
     }
+    
+    // Handle file uploads (if any)
+    if (isset($addon->icon_url) && $addon->icon_url instanceof FileUpload && $addon->icon_url->isOk()) {
+        $iconPath = $this->processImageUpload($addon->icon_url, 'icons');
+        $addon->icon_url = $iconPath;
+    }
+    
+    if (isset($addon->fanart_url) && $addon->fanart_url instanceof FileUpload && $addon->fanart_url->isOk()) {
+        $fanartPath = $this->processImageUpload($addon->fanart_url, 'fanart');
+        $addon->fanart_url = $fanartPath;
+    }
+    
+    // Update slug if name changed
+    if (empty($addon->slug)) {
+        $addon->slug = Strings::webalize($addon->name);
+    }
+    
+    // Set updated timestamp
+    $addon->updated_at = new \DateTime();
+    
+    // Begin transaction
+    $this->database->beginTransaction();
+    
+    try {
+        // Update addon
+        $this->save($addon);
+        
+        // Handle screenshots
+        if (!empty($screenshots)) {
+            // Remove existing screenshots
+            $this->database->table('screenshots')->where('addon_id', $addon->id)->delete();
+            
+            // Add new screenshots
+            foreach ($screenshots as $index => $screenshot) {
+                $screenshot->addon_id = $addon->id;
+                $screenshot->sort_order = $index;
+                $this->database->table('screenshots')->insert($screenshot->toArray());
+            }
+        }
+        
+        // Handle tags
+        if (!empty($tagIds)) {
+            // Remove existing tag associations
+            $this->database->table('addon_tags')->where('addon_id', $addon->id)->delete();
+            
+            // Add new tag associations
+            foreach ($tagIds as $tagId) {
+                $addonTag = new AddonTag();
+                $addonTag->addon_id = $addon->id;
+                $addonTag->tag_id = $tagId;
+                $this->database->table('addon_tags')->insert($addonTag->toArray());
+            }
+        }
+        
+        // Commit transaction
+        $this->database->commit();
+        
+        return $addon->id;
+    } catch (\Exception $e) {
+        // Rollback on error
+        $this->database->rollBack();
+        throw $e;
+    }
+}
     
     /**
      * Get addon with related data
