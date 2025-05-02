@@ -5,14 +5,22 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\AddonReview;
+use App\Collection\Collection;
+use App\Collection\PaginatedCollection;
+use App\Repository\Interface\ReviewRepositoryInterface;
+use App\Repository\Interface\AddonRepositoryInterface;
 use Nette\Database\Explorer;
 
-class ReviewRepository extends BaseRepository
+/**
+ * @extends BaseRepository<AddonReview>
+ * @implements ReviewRepositoryInterface
+ */
+class ReviewRepository extends BaseRepository implements ReviewRepositoryInterface
 {
-    /** @var AddonRepository */
-    private AddonRepository $addonRepository;
+    /** @var AddonRepositoryInterface */
+    private AddonRepositoryInterface $addonRepository;
 
-    public function __construct(Explorer $database, AddonRepository $addonRepository)
+    public function __construct(Explorer $database, AddonRepositoryInterface $addonRepository)
     {
         parent::__construct($database);
         $this->tableName = 'addon_reviews';
@@ -63,13 +71,13 @@ class ReviewRepository extends BaseRepository
         return $result;
     }
 
-/**
+    /**
      * Find reviews by addon
      * 
      * @param int $addonId
-     * @return array
+     * @return Collection<AddonReview>
      */
-    public function findByAddon(int $addonId): array
+    public function findByAddon(int $addonId): Collection
     {
         $rows = $this->findBy(['addon_id' => $addonId])
             ->order('created_at DESC');
@@ -79,7 +87,7 @@ class ReviewRepository extends BaseRepository
             $reviews[] = AddonReview::fromArray($row->toArray());
         }
         
-        return $reviews;
+        return new Collection($reviews);
     }
 
     /**
@@ -90,9 +98,9 @@ class ReviewRepository extends BaseRepository
      * @param string $sortDir Sort direction (ASC or DESC)
      * @param int $page Page number
      * @param int $itemsPerPage Items per page
-     * @return array
+     * @return PaginatedCollection<AddonReview>
      */
-    public function findWithFilters(array $filters = [], string $sortBy = 'created_at', string $sortDir = 'DESC', int $page = 1, int $itemsPerPage = 10): array
+    public function findWithFilters(array $filters = [], string $sortBy = 'created_at', string $sortDir = 'DESC', int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         $selection = $this->getTable();
         
@@ -175,13 +183,16 @@ class ReviewRepository extends BaseRepository
             $items[] = AddonReview::fromArray($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        // Create collection and paginated collection
+        $collection = new Collection($items);
+        
+        return new PaginatedCollection(
+            $collection,
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
@@ -194,7 +205,7 @@ class ReviewRepository extends BaseRepository
     {
         $reviews = $this->findByAddon($addonId);
         
-        if (empty($reviews)) {
+        if ($reviews->count() === 0) {
             return [
                 'positive' => 0,
                 'neutral' => 0,
@@ -217,7 +228,7 @@ class ReviewRepository extends BaseRepository
             }
         }
         
-        $total = count($reviews);
+        $total = $reviews->count();
         $sentimentScore = ($positive - $negative) / $total;
         
         return [
@@ -348,9 +359,9 @@ class ReviewRepository extends BaseRepository
      * @param int $rating
      * @param int $page
      * @param int $itemsPerPage
-     * @return array
+     * @return PaginatedCollection<AddonReview>
      */
-    public function getReviewsByRating(int $rating, int $page = 1, int $itemsPerPage = 10): array
+    public function getReviewsByRating(int $rating, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         return $this->findWithFilters(['rating' => $rating], 'created_at', 'DESC', $page, $itemsPerPage);
     }

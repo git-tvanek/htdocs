@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Repository\Interface\BaseRepositoryInterface;
+use App\Collection\Collection;
+use App\Collection\PaginatedCollection;
 use Nette\Database\Explorer;
 use Nette\Database\Table\Selection;
 use Nette\SmartObject;
 
-abstract class BaseRepository
+/**
+ * @template T of object
+ * @implements BaseRepositoryInterface<T>
+ */
+abstract class BaseRepository implements BaseRepositoryInterface
 {
     use SmartObject;
 
@@ -40,7 +47,7 @@ abstract class BaseRepository
      * Get record by ID
      * 
      * @param int $id
-     * @return object|null The entity or null if not found
+     * @return T|null The entity or null if not found
      */
     public function findById(int $id): ?object
     {
@@ -52,7 +59,7 @@ abstract class BaseRepository
      * Find one record by given criteria
      * 
      * @param array $criteria
-     * @return object|null The entity or null if not found
+     * @return T|null The entity or null if not found
      */
     public function findOneBy(array $criteria): ?object
     {
@@ -70,20 +77,16 @@ abstract class BaseRepository
     {
         $selection = $this->getTable();
         foreach ($criteria as $key => $value) {
-            if (is_array($value)) {
-                $selection->where($key, $value);
-            } else {
-                $selection->where($key, $value);
-            }
+            $selection->where($key, $value);
         }
         return $selection;
     }
 
     /**
-     * Create a new record
+     * Create a new record or update existing
      * 
-     * @param object $entity
-     * @return int The ID of the new record
+     * @param T $entity
+     * @return int The ID of the record
      */
     public function save(object $entity): int
     {
@@ -137,9 +140,9 @@ abstract class BaseRepository
      * @param int $itemsPerPage
      * @param string $orderColumn
      * @param string $orderDir
-     * @return array
+     * @return PaginatedCollection<T>
      */
-    public function findWithPagination(array $criteria = [], int $page = 1, int $itemsPerPage = 10, string $orderColumn = 'id', string $orderDir = 'ASC'): array
+    public function findWithPagination(array $criteria = [], int $page = 1, int $itemsPerPage = 10, string $orderColumn = 'id', string $orderDir = 'ASC'): PaginatedCollection
     {
         $selection = $this->findBy($criteria);
         $selection->order("$orderColumn $orderDir");
@@ -155,13 +158,17 @@ abstract class BaseRepository
             $items[] = $this->createEntity($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        // Vytvoření typované kolekce
+        $collection = $this->createCollection($items);
+        
+        // Zabalení do stránkované kolekce
+        return new PaginatedCollection(
+            $collection,
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
@@ -178,7 +185,7 @@ abstract class BaseRepository
      * Create an entity instance from data array
      * 
      * @param array $data
-     * @return object
+     * @return T
      */
     protected function createEntity(array $data): object
     {
@@ -188,11 +195,22 @@ abstract class BaseRepository
     /**
      * Convert entity to array for database operations
      * 
-     * @param object $entity
+     * @param T $entity
      * @return array
      */
     protected function entityToArray(object $entity): array
     {
         return $entity->toArray();
+    }
+    
+    /**
+     * Create a collection from entities
+     * 
+     * @param T[] $entities
+     * @return Collection<T>
+     */
+    protected function createCollection(array $entities): Collection
+    {
+        return new Collection($entities);
     }
 }

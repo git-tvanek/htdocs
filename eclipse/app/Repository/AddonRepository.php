@@ -8,11 +8,20 @@ use App\Model\Addon;
 use App\Model\Screenshot;
 use App\Model\Tag;
 use App\Model\AddonTag;
+use App\Collection\Collection;
+use App\Collection\PaginatedCollection;
+use App\Repository\Interface\AddonRepositoryInterface;
+use App\Repository\Query\AddonAdvancedSearchQuery;
+use App\Repository\Query\AddonFilterQuery;
 use Nette\Database\Explorer;
 use Nette\Database\Table\Selection;
 use Nette\Utils\Strings;
 
-class AddonRepository extends BaseRepository
+/**
+ * @extends BaseRepository<Addon>
+ * @implements AddonRepositoryInterface
+ */
+class AddonRepository extends BaseRepository implements AddonRepositoryInterface
 {
     public function __construct(Explorer $database)
     {
@@ -29,6 +38,7 @@ class AddonRepository extends BaseRepository
      */
     public function findBySlug(string $slug): ?Addon
     {
+        /** @var Addon|null */
         return $this->findOneBy(['slug' => $slug]);
     }
 
@@ -38,9 +48,9 @@ class AddonRepository extends BaseRepository
      * @param int $categoryId
      * @param int $page
      * @param int $itemsPerPage
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function findByCategory(int $categoryId, int $page = 1, int $itemsPerPage = 10): array
+    public function findByCategory(int $categoryId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         return $this->findWithPagination(['category_id' => $categoryId], $page, $itemsPerPage, 'name', 'ASC');
     }
@@ -51,18 +61,21 @@ class AddonRepository extends BaseRepository
      * @param int $categoryId
      * @param int $page
      * @param int $itemsPerPage
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function findByCategoryRecursive(int $categoryId, int $page = 1, int $itemsPerPage = 10): array
+    public function findByCategoryRecursive(int $categoryId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         // Get the category repository
         $categoryRepository = new CategoryRepository($this->database);
         
         // Get all subcategories including the parent category
         $subcategories = $categoryRepository->findAllSubcategoriesRecursive($categoryId);
-        $categoryIds = array_map(function($category) {
-            return $category->id;
-        }, $subcategories);
+        $categoryIds = [];
+        
+        foreach ($subcategories as $category) {
+            $categoryIds[] = $category->id;
+        }
+        
         $categoryIds[] = $categoryId; // Include the parent category
         
         // Find addons in all categories
@@ -75,9 +88,9 @@ class AddonRepository extends BaseRepository
      * @param int $authorId
      * @param int $page
      * @param int $itemsPerPage
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function findByAuthor(int $authorId, int $page = 1, int $itemsPerPage = 10): array
+    public function findByAuthor(int $authorId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         return $this->findWithPagination(['author_id' => $authorId], $page, $itemsPerPage, 'name', 'ASC');
     }
@@ -86,9 +99,9 @@ class AddonRepository extends BaseRepository
      * Find popular addons
      * 
      * @param int $limit
-     * @return Addon[]
+     * @return Collection<Addon>
      */
-    public function findPopular(int $limit = 10): array
+    public function findPopular(int $limit = 10): Collection
     {
         $rows = $this->findAll()->order('downloads_count DESC')->limit($limit);
         $addons = [];
@@ -97,16 +110,16 @@ class AddonRepository extends BaseRepository
             $addons[] = Addon::fromArray($row->toArray());
         }
         
-        return $addons;
+        return new Collection($addons);
     }
 
     /**
      * Find top rated addons
      * 
      * @param int $limit
-     * @return Addon[]
+     * @return Collection<Addon>
      */
-    public function findTopRated(int $limit = 10): array
+    public function findTopRated(int $limit = 10): Collection
     {
         $rows = $this->findAll()->order('rating DESC')->limit($limit);
         $addons = [];
@@ -115,16 +128,16 @@ class AddonRepository extends BaseRepository
             $addons[] = Addon::fromArray($row->toArray());
         }
         
-        return $addons;
+        return new Collection($addons);
     }
 
     /**
      * Find newest addons
      * 
      * @param int $limit
-     * @return Addon[]
+     * @return Collection<Addon>
      */
-    public function findNewest(int $limit = 10): array
+    public function findNewest(int $limit = 10): Collection
     {
         $rows = $this->findAll()->order('created_at DESC')->limit($limit);
         $addons = [];
@@ -133,7 +146,7 @@ class AddonRepository extends BaseRepository
             $addons[] = Addon::fromArray($row->toArray());
         }
         
-        return $addons;
+        return new Collection($addons);
     }
 
     /**
@@ -142,9 +155,9 @@ class AddonRepository extends BaseRepository
      * @param string $query
      * @param int $page
      * @param int $itemsPerPage
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function search(string $query, int $page = 1, int $itemsPerPage = 10): array
+    public function search(string $query, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         $selection = $this->getTable()
             ->where('name LIKE ? OR description LIKE ?', 
@@ -160,13 +173,15 @@ class AddonRepository extends BaseRepository
             $items[] = Addon::fromArray($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        $collection = new Collection($items);
+        
+        return new PaginatedCollection(
+            $collection,
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
@@ -395,129 +410,97 @@ class AddonRepository extends BaseRepository
      * @param string $sortDir Sort direction (ASC or DESC)
      * @param int $page Page number
      * @param int $itemsPerPage Items per page
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function findWithFilters(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): array
+    public function findWithFilters(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
-        $selection = $this->getTable();
+        $filterQuery = new AddonFilterQuery(
+            $this->database,
+            $filters,
+            $sortBy,
+            $sortDir,
+            $page,
+            $itemsPerPage
+        );
         
-        // Apply filters
-        foreach ($filters as $key => $value) {
-            // Skip empty filters
-            if ($value === null || $value === '') {
-                continue;
-            }
-            
-            switch ($key) {
-                case 'name':
-                case 'description':
-                    $selection->where("$key LIKE ?", "%{$value}%");
-                    break;
-                    
-                case 'category_ids':
-                    if (is_array($value) && !empty($value)) {
-                        $selection->where('category_id IN ?', $value);
-                    } elseif (!is_array($value) && $value) {
-                        $selection->where('category_id', $value);
-                    }
-                    break;
-                    
-                case 'author_ids':
-                    if (is_array($value) && !empty($value)) {
-                        $selection->where('author_id IN ?', $value);
-                    } elseif (!is_array($value) && $value) {
-                        $selection->where('author_id', $value);
-                    }
-                    break;
-                    
-                case 'tag_ids':
-                    if (is_array($value) && !empty($value)) {
-                        // Subquery to find addons with specific tags
-                        $selection->where('id IN ?', 
-                            $this->database->table('addon_tags')
-                                ->where('tag_id IN ?', $value)
-                                ->select('addon_id')
-                        );
-                    } elseif (!is_array($value) && $value) {
-                        $selection->where('id IN ?', 
-                            $this->database->table('addon_tags')
-                                ->where('tag_id', $value)
-                                ->select('addon_id')
-                        );
-                    }
-                    break;
-                    
-                case 'min_rating':
-                    $selection->where('rating >= ?', $value);
-                    break;
-                    
-                case 'max_rating':
-                    $selection->where('rating <= ?', $value);
-                    break;
-                    
-                case 'min_downloads':
-                    $selection->where('downloads_count >= ?', $value);
-                    break;
-                    
-                case 'max_downloads':
-                    $selection->where('downloads_count <= ?', $value);
-                    break;
-                    
-                case 'kodi_version':
-                    // Handle Kodi version compatibility
-                    $selection->where('kodi_version_min <= ? AND (kodi_version_max >= ? OR kodi_version_max IS NULL)', $value, $value);
-                    break;
-                    
-                case 'created_after':
-                    if ($value instanceof \DateTime) {
-                        $selection->where('created_at >= ?', $value->format('Y-m-d H:i:s'));
-                    }
-                    break;
-                    
-                case 'created_before':
-                    if ($value instanceof \DateTime) {
-                        $selection->where('created_at <= ?', $value->format('Y-m-d H:i:s'));
-                    }
-                    break;
-                    
-                default:
-                    // For direct field matching (like id, category_id, etc.)
-                    if (property_exists('App\Model\Addon', $key)) {
-                        $selection->where($key, $value);
-                    }
-                    break;
-            }
-        }
-        
-        // Count total matching records
-        $count = $selection->count();
-        $pages = (int) ceil($count / $itemsPerPage);
-        
-        // Apply sorting
-        if (property_exists('App\Model\Addon', $sortBy)) {
-            $selection->order("$sortBy $sortDir");
-        } else {
-            $selection->order("name ASC"); // Default sorting
-        }
-        
-        // Apply pagination
-        $selection->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
-        
-        // Convert to entities
-        $items = [];
-        foreach ($selection as $row) {
-            $items[] = Addon::fromArray($row->toArray());
-        }
-        
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        return $filterQuery->execute();
     }
 
+    /**
+     * Find similar addons based on tags and category
+     * 
+     * @param int $addonId
+     * @param int $limit
+     * @return Collection<Addon>
+     */
+    public function findSimilarAddons(int $addonId, int $limit = 5): Collection
+    {
+        $addon = $this->findById($addonId);
+        if (!$addon) {
+            return new Collection();
+        }
+
+        // Get the addon's tags
+        $addonTags = $this->database->table('addon_tags')
+            ->where('addon_id', $addonId)
+            ->select('tag_id');
+
+        $tagIds = [];
+        foreach ($addonTags as $tag) {
+            $tagIds[] = $tag->tag_id;
+        }
+
+        // If no tags found, fallback to category only
+        if (empty($tagIds)) {
+            $result = $this->findWithFilters([
+                'category_id' => $addon->category_id,
+                'id != ?' => $addonId
+            ], 'downloads_count', 'DESC', 1, $limit);
+            
+            return $result->getItems();
+        }
+
+        // Find addons with similar tags and same category
+        $query = "
+            SELECT a.*, 
+                   COUNT(DISTINCT at.tag_id) AS matching_tags,
+                   (a.category_id = ?) AS same_category
+            FROM addons a
+            JOIN addon_tags at ON a.id = at.addon_id
+            WHERE at.tag_id IN (?) AND a.id != ?
+            GROUP BY a.id
+            ORDER BY (same_category * 2 + matching_tags) DESC, a.downloads_count DESC
+            LIMIT ?
+        ";
+
+        $result = $this->database->query($query, $addon->category_id, $tagIds, $addonId, $limit);
+
+        $similarAddons = [];
+        foreach ($result as $row) {
+            $similarAddons[] = Addon::fromArray([
+                'id' => $row->id,
+                'name' => $row->name,
+                'slug' => $row->slug,
+                'description' => $row->description,
+                'version' => $row->version,
+                'author_id' => $row->author_id,
+                'category_id' => $row->category_id,
+                'repository_url' => $row->repository_url,
+                'download_url' => $row->download_url,
+                'icon_url' => $row->icon_url,
+                'fanart_url' => $row->fanart_url,
+                'kodi_version_min' => $row->kodi_version_min,
+                'kodi_version_max' => $row->kodi_version_max,
+                'downloads_count' => $row->downloads_count,
+                'rating' => $row->rating,
+                'created_at' => $row->created_at,
+                'updated_at' => $row->updated_at
+            ]);
+        }
+
+        return new Collection($similarAddons);
+    }
+    
     /**
      * Comprehensive search with relevance sorting
      * 
@@ -526,135 +509,22 @@ class AddonRepository extends BaseRepository
      * @param array $filters Additional filters to apply
      * @param int $page Page number
      * @param int $itemsPerPage Items per page
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function advancedSearch(string $query, array $fields = ['name', 'description'], array $filters = [], int $page = 1, int $itemsPerPage = 10): array
+    public function advancedSearch(string $query, array $fields = ['name', 'description'], array $filters = [], int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
-        // Clean up the query and split into words
-        $query = trim($query);
-        if (empty($query)) {
-            return $this->findWithFilters($filters, 'name', 'ASC', $page, $itemsPerPage);
-        }
+        $searchQuery = new AddonAdvancedSearchQuery(
+            $this->database,
+            $query,
+            $fields,
+            $filters,
+            $page,
+            $itemsPerPage
+        );
         
-        $keywords = preg_split('/\s+/', $query);
-        $selection = $this->getTable();
-        
-        // Build the search conditions
-        $conditions = [];
-        $params = [];
-        
-        foreach ($fields as $field) {
-            foreach ($keywords as $keyword) {
-                $conditions[] = "$field LIKE ?";
-                $params[] = "%{$keyword}%";
-            }
-        }
-        
-        if (!empty($conditions)) {
-            $selection->where(implode(' OR ', $conditions), ...$params);
-        }
-        
-        // Apply additional filters
-        foreach ($filters as $key => $value) {
-            if ($value === null || $value === '') {
-                continue;
-            }
-            
-            switch ($key) {
-                case 'category_ids':
-                    if (is_array($value) && !empty($value)) {
-                        $selection->where('category_id IN ?', $value);
-                    } elseif (!is_array($value) && $value) {
-                        $selection->where('category_id', $value);
-                    }
-                    break;
-                    
-                case 'author_ids':
-                    if (is_array($value) && !empty($value)) {
-                        $selection->where('author_id IN ?', $value);
-                    } elseif (!is_array($value) && $value) {
-                        $selection->where('author_id', $value);
-                    }
-                    break;
-                
-                case 'tag_ids':
-                    if (is_array($value) && !empty($value)) {
-                        $selection->where('id IN ?', 
-                            $this->database->table('addon_tags')
-                                ->where('tag_id IN ?', $value)
-                                ->select('addon_id')
-                        );
-                    }
-                    break;
-                    
-                case 'min_rating':
-                    $selection->where('rating >= ?', $value);
-                    break;
-                    
-                case 'max_rating':
-                    $selection->where('rating <= ?', $value);
-                    break;
-                    
-                default:
-                    if (property_exists('App\Model\Addon', $key)) {
-                        $selection->where($key, $value);
-                    }
-                    break;
-            }
-        }
-        
-        // Count total matching records
-        $count = $selection->count();
-        $pages = (int) ceil($count / $itemsPerPage);
-        
-        // Apply pagination
-        $selection->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
-        
-        // Convert to entities with relevance ranking
-        $items = [];
-        foreach ($selection as $row) {
-            $addon = Addon::fromArray($row->toArray());
-            
-            // Calculate a simple relevance score
-            $relevance = 0;
-            foreach ($keywords as $keyword) {
-                foreach ($fields as $field) {
-                    $value = $addon->{$field} ?? '';
-                    if (is_string($value) && stripos($value, $keyword) !== false) {
-                        $relevance += 1;
-                        // Boost score for exact title matches
-                        if ($field === 'name' && stripos($value, $keyword) === 0) {
-                            $relevance += 2;
-                        }
-                    }
-                }
-            }
-            
-            $items[] = [
-                'addon' => $addon,
-                'relevance' => $relevance
-            ];
-        }
-        
-        // Sort by relevance
-        usort($items, function($a, $b) {
-            return $b['relevance'] <=> $a['relevance'];
-        });
-        
-        // Extract just the addons from the sorted items
-        $sortedAddons = array_map(function($item) {
-            return $item['addon'];
-        }, $items);
-        
-        return [
-            'items' => $sortedAddons,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        return $searchQuery->execute();
     }
-
+    
     /**
      * Perform full-text search
      * 
@@ -662,28 +532,28 @@ class AddonRepository extends BaseRepository
      * @param array $fields Fields to search in
      * @param int $page Page number
      * @param int $itemsPerPage Items per page
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function fullTextSearch(string $query, array $fields = ['name', 'description'], int $page = 1, int $itemsPerPage = 10): array
+    public function fullTextSearch(string $query, array $fields = ['name', 'description'], int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
-        // If query is empty, return empty result
+        // Pokud je dotaz prázdný, vrátit prázdný výsledek
         if (empty(trim($query))) {
-            return [
-                'items' => [],
-                'totalCount' => 0,
-                'page' => $page,
-                'itemsPerPage' => $itemsPerPage,
-                'pages' => 0
-            ];
+            return new PaginatedCollection(
+                new Collection([]),
+                0,
+                $page,
+                $itemsPerPage,
+                0
+            );
         }
         
-        // For SQLite, we'll implement a simple LIKE-based search
-        // In a production environment with MySQL, you might use MATCH AGAINST
+        // Pro SQLite implementujeme jednoduché vyhledávání založené na LIKE
+        // V produkčním prostředí s MySQL byste mohli použít MATCH AGAINST
         $selection = $this->getTable();
         $conditions = [];
         $params = [];
         
-        // Split query into keywords
+        // Rozdělit dotaz na klíčová slova
         $keywords = preg_split('/\s+/', trim($query));
         
         foreach ($fields as $field) {
@@ -697,26 +567,27 @@ class AddonRepository extends BaseRepository
             $selection->where(implode(' OR ', $conditions), ...$params);
         }
         
-        // Count total matching records
+        // Spočítat celkový počet odpovídajících záznamů
         $count = $selection->count();
         $pages = (int) ceil($count / $itemsPerPage);
         
-        // Apply pagination
+        // Aplikovat stránkování
         $selection->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
         
-        // Convert to entities
+        // Převést na entity
         $items = [];
         foreach ($selection as $row) {
             $items[] = Addon::fromArray($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        // Vytvořit a vrátit typovanou kolekci s paginací
+        return new PaginatedCollection(
+            new Collection($items),
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
@@ -911,78 +782,5 @@ class AddonRepository extends BaseRepository
         }
         
         return $authors;
-    }
-
-    /**
-     * Find similar addons based on tags and category
-     * 
-     * @param int $addonId
-     * @param int $limit
-     * @return array
-     */
-    public function findSimilarAddons(int $addonId, int $limit = 5): array
-    {
-        $addon = $this->findById($addonId);
-        if (!$addon) {
-            return [];
-        }
-
-        // Get the addon's tags
-        $addonTags = $this->database->table('addon_tags')
-            ->where('addon_id', $addonId)
-            ->select('tag_id');
-
-        $tagIds = [];
-        foreach ($addonTags as $tag) {
-            $tagIds[] = $tag->tag_id;
-        }
-
-        // If no tags found, fallback to category only
-        if (empty($tagIds)) {
-            return $this->findWithFilters([
-                'category_id' => $addon->category_id,
-                'id != ?' => $addonId
-            ], 'downloads_count', 'DESC', 1, $limit)['items'];
-        }
-
-        // Find addons with similar tags and same category
-        $query = "
-            SELECT a.*, 
-                   COUNT(DISTINCT at.tag_id) AS matching_tags,
-                   (a.category_id = ?) AS same_category
-            FROM addons a
-            JOIN addon_tags at ON a.id = at.addon_id
-            WHERE at.tag_id IN (?) AND a.id != ?
-            GROUP BY a.id
-            ORDER BY (same_category * 2 + matching_tags) DESC, a.downloads_count DESC
-            LIMIT ?
-        ";
-
-        $result = $this->database->query($query, $addon->category_id, $tagIds, $addonId, $limit);
-
-        $similarAddons = [];
-        foreach ($result as $row) {
-            $similarAddons[] = Addon::fromArray([
-                'id' => $row->id,
-                'name' => $row->name,
-                'slug' => $row->slug,
-                'description' => $row->description,
-                'version' => $row->version,
-                'author_id' => $row->author_id,
-                'category_id' => $row->category_id,
-                'repository_url' => $row->repository_url,
-                'download_url' => $row->download_url,
-                'icon_url' => $row->icon_url,
-                'fanart_url' => $row->fanart_url,
-                'kodi_version_min' => $row->kodi_version_min,
-                'kodi_version_max' => $row->kodi_version_max,
-                'downloads_count' => $row->downloads_count,
-                'rating' => $row->rating,
-                'created_at' => $row->created_at,
-                'updated_at' => $row->updated_at
-            ]);
-        }
-
-        return $similarAddons;
     }
 }

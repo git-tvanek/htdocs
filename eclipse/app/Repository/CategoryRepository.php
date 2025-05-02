@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Category;
+use App\Collection\Collection;
+use App\Collection\PaginatedCollection;
+use App\Repository\Interface\CategoryRepositoryInterface;
 use Nette\Database\Explorer;
 use Nette\Utils\Strings;
 
-class CategoryRepository extends BaseRepository
+/**
+ * @extends BaseRepository<Category>
+ * @implements CategoryRepositoryInterface
+ */
+class CategoryRepository extends BaseRepository implements CategoryRepositoryInterface
 {
     public function __construct(Explorer $database)
     {
@@ -25,15 +32,16 @@ class CategoryRepository extends BaseRepository
      */
     public function findBySlug(string $slug): ?Category
     {
+        /** @var Category|null */
         return $this->findOneBy(['slug' => $slug]);
     }
 
     /**
      * Get root categories
      * 
-     * @return array
+     * @return Collection<Category>
      */
-    public function findRootCategories(): array
+    public function findRootCategories(): Collection
     {
         $rows = $this->findBy(['parent_id' => null]);
         $categories = [];
@@ -42,16 +50,16 @@ class CategoryRepository extends BaseRepository
             $categories[] = Category::fromArray($row->toArray());
         }
         
-        return $categories;
+        return new Collection($categories);
     }
 
     /**
      * Get subcategories of a category
      * 
      * @param int $parentId
-     * @return array
+     * @return Collection<Category>
      */
-    public function findSubcategories(int $parentId): array
+    public function findSubcategories(int $parentId): Collection
     {
         $rows = $this->findBy(['parent_id' => $parentId]);
         $categories = [];
@@ -60,16 +68,16 @@ class CategoryRepository extends BaseRepository
             $categories[] = Category::fromArray($row->toArray());
         }
         
-        return $categories;
+        return new Collection($categories);
     }
 
     /**
      * Get all subcategories recursively
      * 
      * @param int $categoryId
-     * @return array
+     * @return Collection<Category>
      */
-    public function findAllSubcategoriesRecursive(int $categoryId): array
+    public function findAllSubcategoriesRecursive(int $categoryId): Collection
     {
         $result = [];
         $directSubcategories = $this->findSubcategories($categoryId);
@@ -82,22 +90,22 @@ class CategoryRepository extends BaseRepository
             }
         }
         
-        return $result;
+        return new Collection($result);
     }
 
     /**
      * Get complete path to category (from root to the category)
      * 
      * @param int $categoryId
-     * @return array
+     * @return Collection<Category>
      */
-    public function getCategoryPath(int $categoryId): array
+    public function getCategoryPath(int $categoryId): Collection
     {
         $path = [];
         $currentCategory = $this->findById($categoryId);
         
         if (!$currentCategory) {
-            return $path;
+            return new Collection();
         }
         
         $path[] = $currentCategory;
@@ -112,7 +120,7 @@ class CategoryRepository extends BaseRepository
             }
         }
         
-        return $path;
+        return new Collection($path);
     }
 
     /**
@@ -296,94 +304,5 @@ class CategoryRepository extends BaseRepository
         }
         
         return $total;
-    }
-
-    /**
-     * Get categories with advanced filtering and sorting
-     * 
-     * @param array $filters Filtering criteria (e.g., ['parent_id' => 1, 'name_like' => 'test'])
-     * @param string $sortBy Field to sort by
-     * @param string $sortDir Sort direction (ASC or DESC)
-     * @param int $page Page number
-     * @param int $itemsPerPage Items per page
-     * @return array
-     */
-    public function findFilteredCategories(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): array
-    {
-        $selection = $this->getTable();
-        
-        // Apply filters
-        foreach ($filters as $key => $value) {
-            if ($value === null || $value === '') {
-                continue;
-            }
-            
-            switch ($key) {
-                case 'name_like':
-                    $selection->where('name LIKE ?', "%{$value}%");
-                    break;
-                    
-                case 'parent_id':
-                    if ($value === 'null') {
-                        $selection->where('parent_id IS NULL');
-                    } else {
-                        $selection->where('parent_id', $value);
-                    }
-                    break;
-                    
-                case 'has_addons':
-                    if ($value) {
-                        $selection->where('id IN (SELECT DISTINCT category_id FROM addons)');
-                    } else {
-                        $selection->where('id NOT IN (SELECT DISTINCT category_id FROM addons)');
-                    }
-                    break;
-                    
-                case 'min_addons':
-                    $selection->where('id IN (
-                        SELECT category_id FROM (
-                            SELECT category_id, COUNT(*) as addon_count 
-                            FROM addons 
-                            GROUP BY category_id
-                            HAVING addon_count >= ?
-                        ) AS subquery
-                    )', $value);
-                    break;
-                    
-                default:
-                    if (property_exists('App\Model\Category', $key)) {
-                        $selection->where($key, $value);
-                    }
-                    break;
-            }
-        }
-        
-        // Count total matching records
-        $count = $selection->count();
-        $pages = (int) ceil($count / $itemsPerPage);
-        
-        // Apply sorting
-        if (property_exists('App\Model\Category', $sortBy)) {
-            $selection->order("$sortBy $sortDir");
-        } else {
-            $selection->order("name ASC"); // Default sorting
-        }
-        
-        // Apply pagination
-        $selection->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
-        
-        // Convert to entities
-        $items = [];
-        foreach ($selection as $row) {
-            $items[] = Category::fromArray($row->toArray());
-        }
-        
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
     }
 }

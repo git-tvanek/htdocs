@@ -6,10 +6,17 @@ namespace App\Repository;
 
 use App\Model\Tag;
 use App\Model\Addon;
+use App\Collection\Collection;
+use App\Collection\PaginatedCollection;
+use App\Repository\Interface\TagRepositoryInterface;
 use Nette\Database\Explorer;
 use Nette\Utils\Strings;
 
-class TagRepository extends BaseRepository
+/**
+ * @extends BaseRepository<Tag>
+ * @implements TagRepositoryInterface
+ */
+class TagRepository extends BaseRepository implements TagRepositoryInterface
 {
     public function __construct(Explorer $database)
     {
@@ -26,6 +33,7 @@ class TagRepository extends BaseRepository
      */
     public function findBySlug(string $slug): ?Tag
     {
+        /** @var Tag|null */
         return $this->findOneBy(['slug' => $slug]);
     }
 
@@ -99,9 +107,9 @@ class TagRepository extends BaseRepository
      * @param int $tagId
      * @param int $page
      * @param int $itemsPerPage
-     * @return array
+     * @return PaginatedCollection<Addon>
      */
-    public function findAddonsByTag(int $tagId, int $page = 1, int $itemsPerPage = 10): array
+    public function findAddonsByTag(int $tagId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         $selection = $this->database->table('addons')
             ->select('addons.*')
@@ -119,13 +127,13 @@ class TagRepository extends BaseRepository
             $items[] = Addon::fromArray($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        return new PaginatedCollection(
+            new Collection($items),
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
@@ -136,9 +144,9 @@ class TagRepository extends BaseRepository
      * @param string $sortDir Sort direction (ASC or DESC)
      * @param int $page Page number
      * @param int $itemsPerPage Items per page
-     * @return array
+     * @return PaginatedCollection<Tag>
      */
-    public function findWithFilters(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): array
+    public function findWithFilters(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         $selection = $this->getTable();
         
@@ -210,13 +218,13 @@ class TagRepository extends BaseRepository
             $items[] = Tag::fromArray($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        return new PaginatedCollection(
+            new Collection($items),
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
@@ -308,7 +316,7 @@ class TagRepository extends BaseRepository
      * Generate a weighted tag cloud
      * 
      * @param int $limit Maximum number of tags to include
-     * @param int $categoryId Optional category ID to filter by
+     * @param int|null $categoryId Optional category ID to filter by
      * @return array
      */
     public function generateTagCloud(int $limit = 50, ?int $categoryId = null): array

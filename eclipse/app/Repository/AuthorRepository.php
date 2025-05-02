@@ -6,9 +6,16 @@ namespace App\Repository;
 
 use App\Model\Author;
 use App\Model\Addon;
+use App\Collection\Collection;
+use App\Collection\PaginatedCollection;
+use App\Repository\Interface\AuthorRepositoryInterface;
 use Nette\Database\Explorer;
 
-class AuthorRepository extends BaseRepository
+/**
+ * @extends BaseRepository<Author>
+ * @implements AuthorRepositoryInterface
+ */
+class AuthorRepository extends BaseRepository implements AuthorRepositoryInterface
 {
     public function __construct(Explorer $database)
     {
@@ -56,7 +63,7 @@ class AuthorRepository extends BaseRepository
         
         return [
             'author' => $author,
-            'addons' => $addons
+            'addons' => new Collection($addons)
         ];
     }
 
@@ -68,9 +75,9 @@ class AuthorRepository extends BaseRepository
      * @param string $sortDir Sort direction (ASC or DESC)
      * @param int $page Page number
      * @param int $itemsPerPage Items per page
-     * @return array
+     * @return PaginatedCollection<Author>
      */
-    public function findWithFilters(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): array
+    public function findWithFilters(array $filters = [], string $sortBy = 'name', string $sortDir = 'ASC', int $page = 1, int $itemsPerPage = 10): PaginatedCollection
     {
         $selection = $this->getTable();
         
@@ -150,13 +157,13 @@ class AuthorRepository extends BaseRepository
             $items[] = Author::fromArray($row->toArray());
         }
         
-        return [
-            'items' => $items,
-            'totalCount' => $count,
-            'page' => $page,
-            'itemsPerPage' => $itemsPerPage,
-            'pages' => $pages
-        ];
+        return new PaginatedCollection(
+            new Collection($items),
+            $count,
+            $page,
+            $itemsPerPage,
+            $pages
+        );
     }
 
     /**
