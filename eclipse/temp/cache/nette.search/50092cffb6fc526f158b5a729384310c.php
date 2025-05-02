@@ -7,6 +7,36 @@ return array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Bootstrap.php',
       1 => 1738539948,
     ),
+    'App\\Collection\\AddonCollection' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Collection\\AddonCollection.php',
+      1 => 1746175815,
+    ),
+    'App\\Collection\\AuthorCollection' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Collection\\AuthorCollection.php',
+      1 => 1746177576,
+    ),
+    'App\\Collection\\Collection' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Collection\\Collection.php',
+      1 => 1746175982,
+    ),
+    'App\\Collection\\PaginatedCollection' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Collection\\PaginatedCollection.php',
+      1 => 1746175836,
+    ),
+    'App\\Collection\\ReviewCollection' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Collection\\ReviewCollection.php',
+      1 => 1746177604,
+    ),
+    'App\\Collection\\TagCollection' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Collection\\TagCollection.php',
+      1 => 1746177589,
+    ),
     'App\\Core\\RouterFactory' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Core\\RouterFactory.php',
@@ -70,32 +100,72 @@ return array (
     'App\\Repository\\AddonRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\AddonRepository.php',
-      1 => 1746127648,
+      1 => 1746178286,
     ),
     'App\\Repository\\AuthorRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\AuthorRepository.php',
-      1 => 1746127648,
+      1 => 1746177700,
     ),
     'App\\Repository\\BaseRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\BaseRepository.php',
-      1 => 1746127648,
+      1 => 1746178286,
     ),
     'App\\Repository\\CategoryRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\CategoryRepository.php',
-      1 => 1746127648,
+      1 => 1746176572,
+    ),
+    'App\\Repository\\Interface\\AddonRepositoryInterface' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\AddonRepositoryInteface.php',
+      1 => 1746176511,
+    ),
+    'App\\Repository\\Interface\\AuthorRepositoryInterface' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\AuthorRepositoryInterface.php',
+      1 => 1746177329,
+    ),
+    'App\\Repository\\Interface\\BaseRepositoryInterface' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\BaseRepositoryInterface.php',
+      1 => 1746176080,
+    ),
+    'App\\Repository\\Interface\\CategoryRepositoryInterface' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\CategoryRepositoryInterface.php',
+      1 => 1746176550,
+    ),
+    'App\\Repository\\Interface\\ReviewRepositoryInterface' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\ReviewRepositoryInterface.php',
+      1 => 1746177302,
+    ),
+    'App\\Repository\\Interface\\TagRepositoryInterface' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\TagRepositoryInterface.php',
+      1 => 1746177317,
+    ),
+    'App\\Repository\\Query\\AddonAdvancedSearchQuery' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Query\\AddonAdvancedSearchQuery.php',
+      1 => 1746175752,
+    ),
+    'App\\Repository\\Query\\AddonFilterQuery' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Query\\AddonFilterQuery.php',
+      1 => 1746176461,
     ),
     'App\\Repository\\ReviewRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\ReviewRepository.php',
-      1 => 1746127287,
+      1 => 1746178286,
     ),
     'App\\Repository\\TagRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\TagRepository.php',
-      1 => 1746127767,
+      1 => 1746177750,
     ),
   ),
   1 => 

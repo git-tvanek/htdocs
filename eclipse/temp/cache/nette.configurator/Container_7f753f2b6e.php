@@ -81,10 +81,16 @@ class Container_7f753f2b6e extends Nette\DI\Container
 		'NetteModule\ErrorPresenter' => [2 => ['application.4']],
 		'NetteModule\MicroPresenter' => [2 => ['application.5']],
 		'App\Repository\BaseRepository' => [['02', '03', '04', '05', '06']],
+		'App\Repository\Interface\BaseRepositoryInterface' => [['02', '03', '04', '05', '06']],
+		'App\Repository\Interface\AddonRepositoryInterface' => [['02']],
 		'App\Repository\AddonRepository' => [['02']],
+		'App\Repository\Interface\AuthorRepositoryInterface' => [['03']],
 		'App\Repository\AuthorRepository' => [['03']],
+		'App\Repository\Interface\CategoryRepositoryInterface' => [['04']],
 		'App\Repository\CategoryRepository' => [['04']],
+		'App\Repository\Interface\ReviewRepositoryInterface' => [['05']],
 		'App\Repository\ReviewRepository' => [['05']],
+		'App\Repository\Interface\TagRepositoryInterface' => [['06']],
 		'App\Repository\TagRepository' => [['06']],
 	];
 
