@@ -7,20 +7,20 @@ namespace App\Repository;
 use App\Model\AddonReview;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
-use App\Repository\Interface\ReviewRepositoryInterface;
-use App\Repository\Interface\AddonRepositoryInterface;
+use App\Repository\Interface\IReviewRepository;
+use App\Repository\Interface\IAddonRepository;
 use Nette\Database\Explorer;
 
 /**
  * @extends BaseRepository<AddonReview>
  * @implements ReviewRepositoryInterface
  */
-class ReviewRepository extends BaseRepository implements ReviewRepositoryInterface
+class ReviewRepository extends BaseRepository implements IReviewRepository
 {
-    /** @var AddonRepositoryInterface */
-    private AddonRepositoryInterface $addonRepository;
+    /** @var IAddonRepository */
+    private IAddonRepository $addonRepository;
 
-    public function __construct(Explorer $database, AddonRepositoryInterface $addonRepository)
+    public function __construct(Explorer $database, IAddonRepository $addonRepository)
     {
         parent::__construct($database);
         $this->tableName = 'addon_reviews';

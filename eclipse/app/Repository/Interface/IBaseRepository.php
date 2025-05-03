@@ -13,7 +13,7 @@ use App\Collection\PaginatedCollection;
  * 
  * @template T
  */
-interface BaseRepositoryInterface
+interface IBaseRepository
 {
     /**
      * Získá všechny záznamy

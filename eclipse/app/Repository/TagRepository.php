@@ -8,7 +8,7 @@ use App\Model\Tag;
 use App\Model\Addon;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
-use App\Repository\Interface\TagRepositoryInterface;
+use App\Repository\Interface\ITagRepository;
 use Nette\Database\Explorer;
 use Nette\Utils\Strings;
 
@@ -16,7 +16,7 @@ use Nette\Utils\Strings;
  * @extends BaseRepository<Tag>
  * @implements TagRepositoryInterface
  */
-class TagRepository extends BaseRepository implements TagRepositoryInterface
+class TagRepository extends BaseRepository implements ITagRepository
 {
     public function __construct(Explorer $database)
     {

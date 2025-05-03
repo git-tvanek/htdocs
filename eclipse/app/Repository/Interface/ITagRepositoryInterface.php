@@ -13,7 +13,7 @@ use App\Collection\PaginatedCollection;
  * 
  * @extends BaseRepositoryInterface<Tag>
  */
-interface TagRepositoryInterface extends BaseRepositoryInterface
+interface ITagRepository extends IBaseRepository
 {
     /**
      * Najde tag podle slugu

@@ -13,7 +13,7 @@ use App\Collection\PaginatedCollection;
  * 
  * @extends BaseRepositoryInterface<AddonReview>
  */
-interface ReviewRepositoryInterface extends BaseRepositoryInterface
+interface IReviewRepository extends IBaseRepository
 {
     /**
      * Vytvoří novou recenzi

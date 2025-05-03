@@ -10,7 +10,7 @@ use App\Model\Tag;
 use App\Model\AddonTag;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
-use App\Repository\Interface\AddonRepositoryInterface;
+use App\Repository\Interface\IAddonRepository;
 use App\Repository\Query\AddonAdvancedSearchQuery;
 use App\Repository\Query\AddonFilterQuery;
 use Nette\Database\Explorer;
@@ -22,7 +22,7 @@ use Nette\Utils\Strings;
  * @extends BaseRepository<Addon>
  * @implements AddonRepositoryInterface
  */
-class AddonRepository extends BaseRepository implements AddonRepositoryInterface
+class AddonRepository extends BaseRepository implements IAddonRepository
 {
     public function __construct(Explorer $database)
     {

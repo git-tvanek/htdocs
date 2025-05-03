@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Model\Category;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
-use App\Repository\Interface\CategoryRepositoryInterface;
+use App\Repository\Interface\ICategoryRepository;
 use Nette\Database\Explorer;
 use Nette\Utils\Strings;
 
@@ -15,7 +15,7 @@ use Nette\Utils\Strings;
  * @extends BaseRepository<Category>
  * @implements CategoryRepositoryInterface
  */
-class CategoryRepository extends BaseRepository implements CategoryRepositoryInterface
+class CategoryRepository extends BaseRepository implements ICategoryRepository
 {
     public function __construct(Explorer $database)
     {

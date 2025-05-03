@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 namespace App\Service;
+
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
+use App\Repository\BaseRepository;
 
 /**
  * Base service implementation
@@ -103,7 +105,7 @@ abstract class BaseService implements IBaseService
     /**
      * Get repository for entity
      * 
-     * @return App\Repository\BaseRepository<T>
+     * @return BaseRepository<T>
      */
     abstract protected function getRepository();
 }

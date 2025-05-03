@@ -8,14 +8,14 @@ use App\Model\Author;
 use App\Model\Addon;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
-use App\Repository\Interface\AuthorRepositoryInterface;
+use App\Repository\Interface\IAuthorRepository;
 use Nette\Database\Explorer;
 
 /**
  * @extends BaseRepository<Author>
  * @implements AuthorRepositoryInterface
  */
-class AuthorRepository extends BaseRepository implements AuthorRepositoryInterface
+class AuthorRepository extends BaseRepository implements IAuthorRepository
 {
     public function __construct(Explorer $database)
     {

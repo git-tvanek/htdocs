@@ -13,7 +13,7 @@ use App\Collection\PaginatedCollection;
  * 
  * @extends BaseRepositoryInterface<Category>
  */
-interface CategoryRepositoryInterface extends BaseRepositoryInterface
+interface ICategoryRepository extends IBaseRepository
 {
     /**
      * Najde kategorii podle slugu

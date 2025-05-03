@@ -13,7 +13,7 @@ use App\Collection\PaginatedCollection;
  * 
  * @extends BaseRepositoryInterface<Author>
  */
-interface AuthorRepositoryInterface extends BaseRepositoryInterface
+interface IAuthorRepository extends IBaseRepository
 {
     /**
      * Vytvoří nového autora

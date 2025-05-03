@@ -13,7 +13,7 @@ use App\Collection\PaginatedCollection;
  * 
  * @extends BaseRepositoryInterface<Addon>
  */
-interface AddonRepositoryInterface extends BaseRepositoryInterface
+interface IAddonRepository extends IBaseRepository
 {
     /**
      * Najde doplněk podle slugu

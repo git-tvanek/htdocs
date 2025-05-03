@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Repository\Interface\BaseRepositoryInterface;
+use App\Repository\Interface\IBaseRepository;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
+use App\Service\IBaseService;
 use Nette\Database\Explorer;
 use Nette\Database\Table\Selection;
 use Nette\SmartObject;
@@ -15,7 +16,7 @@ use Nette\SmartObject;
  * @template T of object
  * @implements BaseRepositoryInterface<T>
  */
-abstract class BaseRepository implements BaseRepositoryInterface
+abstract class BaseRepository implements IBaseRepository
 {
     use SmartObject;
 
