@@ -9,25 +9,25 @@ use App\Collection\PaginatedCollection;
 use App\Repository\BaseRepository;
 
 /**
- * Base service implementation
+ * Základní implementace služby
  * 
  * @template T of object
  * @implements IBaseService<T>
  */
 abstract class BaseService implements IBaseService
 {
-    /** @var string Entity class name */
+    /** @var string Název třídy entity */
     protected string $entityClass;
     
-    /** 
-     * Constructor
+    /**
+     * Konstruktor
      */
     public function __construct()
     {
     }
     
     /**
-     * Find an entity by ID
+     * Najde entitu podle ID
      * 
      * @param int $id
      * @return T|null
@@ -38,7 +38,7 @@ abstract class BaseService implements IBaseService
     }
     
     /**
-     * Find all entities
+     * Najde všechny entity
      * 
      * @return Collection<T>
      */
@@ -55,7 +55,7 @@ abstract class BaseService implements IBaseService
     }
     
     /**
-     * Find entities with pagination
+     * Najde entity s paginací
      * 
      * @param array $criteria
      * @param int $page
@@ -81,10 +81,10 @@ abstract class BaseService implements IBaseService
     }
     
     /**
-     * Save an entity (create or update)
+     * Uloží entitu (vytvoří nebo aktualizuje)
      * 
      * @param T $entity
-     * @return int Entity ID
+     * @return int ID entity
      */
     public function save(object $entity): int
     {
@@ -92,10 +92,10 @@ abstract class BaseService implements IBaseService
     }
     
     /**
-     * Delete an entity
+     * Smaže entitu
      * 
      * @param int $id
-     * @return bool Success
+     * @return bool Úspěch
      */
     public function delete(int $id): bool
     {
@@ -103,7 +103,7 @@ abstract class BaseService implements IBaseService
     }
     
     /**
-     * Get repository for entity
+     * Získá repozitář pro entitu
      * 
      * @return BaseRepository<T>
      */

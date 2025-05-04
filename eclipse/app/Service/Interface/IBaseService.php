@@ -8,14 +8,14 @@ use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
 
 /**
- * Base service interface
+ * Základní rozhraní služby
  * 
  * @template T
  */
 interface IBaseService
 {
     /**
-     * Find an entity by ID
+     * Najde entitu podle ID
      * 
      * @param int $id
      * @return T|null
@@ -23,14 +23,14 @@ interface IBaseService
     public function findById(int $id): ?object;
     
     /**
-     * Find all entities
+     * Najde všechny entity
      * 
      * @return Collection<T>
      */
     public function findAll(): Collection;
     
     /**
-     * Find entities with pagination
+     * Najde entity s paginací
      * 
      * @param array $criteria
      * @param int $page
@@ -48,18 +48,18 @@ interface IBaseService
     ): PaginatedCollection;
     
     /**
-     * Save an entity (create or update)
+     * Uloží entitu (vytvoří nebo aktualizuje)
      * 
      * @param T $entity
-     * @return int Entity ID
+     * @return int ID entity
      */
     public function save(object $entity): int;
     
     /**
-     * Delete an entity
+     * Smaže entitu
      * 
      * @param int $id
-     * @return bool Success
+     * @return bool Úspěch
      */
     public function delete(int $id): bool;
 }

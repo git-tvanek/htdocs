@@ -7,9 +7,10 @@ namespace App\Service;
 use App\Model\Category;
 use App\Repository\CategoryRepository;
 use App\Collection\Collection;
+use App\Factory\CategoryFactory;
 
 /**
- * Category service implementation
+ * Implementace služby pro kategorie
  * 
  * @extends BaseService<Category>
  * @implements ICategoryService
@@ -19,20 +20,27 @@ class CategoryService extends BaseService implements ICategoryService
     /** @var CategoryRepository */
     private CategoryRepository $categoryRepository;
     
+    /** @var CategoryFactory */
+    private CategoryFactory $categoryFactory;
+    
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param CategoryRepository $categoryRepository
+     * @param CategoryFactory $categoryFactory
      */
-    public function __construct(CategoryRepository $categoryRepository)
-    {
+    public function __construct(
+        CategoryRepository $categoryRepository,
+        CategoryFactory $categoryFactory
+    ) {
         parent::__construct();
         $this->categoryRepository = $categoryRepository;
+        $this->categoryFactory = $categoryFactory;
         $this->entityClass = Category::class;
     }
     
     /**
-     * Get repository for entity
+     * Získá repozitář pro entitu
      * 
      * @return CategoryRepository
      */
@@ -42,7 +50,66 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Find category by slug
+     * Vytvoří novou kategorii
+     * 
+     * @param array $data
+     * @return int ID vytvořené kategorie
+     */
+    public function create(array $data): int
+    {
+        $category = $this->categoryFactory->create($data);
+        return $this->categoryRepository->create($category);
+    }
+    
+    /**
+     * Vytvoří kořenovou kategorii
+     * 
+     * @param string $name
+     * @param string|null $slug
+     * @return int ID vytvořené kategorie
+     */
+    public function createRoot(string $name, ?string $slug = null): int
+    {
+        $category = $this->categoryFactory->createRoot($name, $slug);
+        return $this->categoryRepository->create($category);
+    }
+    
+    /**
+     * Vytvoří podkategorii
+     * 
+     * @param string $name
+     * @param int $parentId
+     * @param string|null $slug
+     * @return int ID vytvořené kategorie
+     */
+    public function createSubcategory(string $name, int $parentId, ?string $slug = null): int
+    {
+        $category = $this->categoryFactory->createSubcategory($name, $parentId, $slug);
+        return $this->categoryRepository->create($category);
+    }
+    
+    /**
+     * Aktualizuje existující kategorii
+     * 
+     * @param int $id
+     * @param array $data
+     * @return int ID aktualizované kategorie
+     * @throws \Exception
+     */
+    public function update(int $id, array $data): int
+    {
+        $category = $this->findById($id);
+        
+        if (!$category) {
+            throw new \Exception("Kategorie s ID {$id} nebyla nalezena.");
+        }
+        
+        $updatedCategory = $this->categoryFactory->createFromExisting($category, $data, false);
+        return $this->categoryRepository->update($updatedCategory);
+    }
+    
+    /**
+     * Najde kategorii podle slugu
      * 
      * @param string $slug
      * @return Category|null
@@ -53,7 +120,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Find root categories
+     * Najde kořenové kategorie
      * 
      * @return Collection<Category>
      */
@@ -63,7 +130,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Find subcategories
+     * Najde podkategorie
      * 
      * @param int $parentId
      * @return Collection<Category>
@@ -74,7 +141,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Find all subcategories recursively
+     * Najde všechny podkategorie rekurzivně
      * 
      * @param int $categoryId
      * @return Collection<Category>
@@ -85,7 +152,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Get category path (breadcrumbs)
+     * Získá cestu ke kategorii (drobečková navigace)
      * 
      * @param int $categoryId
      * @return Collection<Category>
@@ -96,7 +163,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Get category hierarchy
+     * Získá hierarchii kategorií
      * 
      * @return array
      */
@@ -106,7 +173,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Get most popular categories
+     * Získá nejpopulárnější kategorie
      * 
      * @param int $limit
      * @return array
@@ -117,7 +184,7 @@ class CategoryService extends BaseService implements ICategoryService
     }
     
     /**
-     * Get category hierarchy with stats
+     * Získá hierarchii kategorií se statistikami
      * 
      * @return array
      */
@@ -125,4 +192,5 @@ class CategoryService extends BaseService implements ICategoryService
     {
         return $this->categoryRepository->getHierarchyWithStats();
     }
+
 }

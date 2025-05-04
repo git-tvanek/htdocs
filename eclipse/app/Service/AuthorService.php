@@ -7,9 +7,10 @@ namespace App\Service;
 use App\Model\Author;
 use App\Repository\AuthorRepository;
 use App\Collection\PaginatedCollection;
+use App\Factory\AuthorFactory;
 
 /**
- * Author service implementation
+ * Implementace služby pro autory
  * 
  * @extends BaseService<Author>
  * @implements IAuthorService
@@ -19,20 +20,27 @@ class AuthorService extends BaseService implements IAuthorService
     /** @var AuthorRepository */
     private AuthorRepository $authorRepository;
     
+    /** @var AuthorFactory */
+    private AuthorFactory $authorFactory;
+    
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param AuthorRepository $authorRepository
+     * @param AuthorFactory $authorFactory
      */
-    public function __construct(AuthorRepository $authorRepository) 
-    {
+    public function __construct(
+        AuthorRepository $authorRepository,
+        AuthorFactory $authorFactory
+    ) {
         parent::__construct();
         $this->authorRepository = $authorRepository;
+        $this->authorFactory = $authorFactory;
         $this->entityClass = Author::class;
     }
     
     /**
-     * Get repository for entity
+     * Získá repozitář pro entitu
      * 
      * @return AuthorRepository
      */
@@ -42,7 +50,39 @@ class AuthorService extends BaseService implements IAuthorService
     }
     
     /**
-     * Get author with addons
+     * Vytvoří nového autora
+     * 
+     * @param array $data
+     * @return int ID vytvořeného autora
+     */
+    public function create(array $data): int
+    {
+        $author = $this->authorFactory->create($data);
+        return $this->authorRepository->create($author);
+    }
+    
+    /**
+     * Aktualizuje existujícího autora
+     * 
+     * @param int $id
+     * @param array $data
+     * @return int ID aktualizovaného autora
+     * @throws \Exception
+     */
+    public function update(int $id, array $data): int
+    {
+        $author = $this->findById($id);
+        
+        if (!$author) {
+            throw new \Exception("Autor s ID {$id} nebyl nalezen.");
+        }
+        
+        $updatedAuthor = $this->authorFactory->createFromExisting($author, $data, false);
+        return $this->save($updatedAuthor);
+    }
+    
+    /**
+     * Získá autora s jeho doplňky
      * 
      * @param int $id
      * @return array|null
@@ -53,7 +93,7 @@ class AuthorService extends BaseService implements IAuthorService
     }
     
     /**
-     * Find authors with filters
+     * Najde autory s filtry
      * 
      * @param array $filters
      * @param string $sortBy
@@ -79,7 +119,7 @@ class AuthorService extends BaseService implements IAuthorService
     }
     
     /**
-     * Get author statistics
+     * Získá statistiky autora
      * 
      * @param int $authorId
      * @return array
@@ -90,7 +130,7 @@ class AuthorService extends BaseService implements IAuthorService
     }
     
     /**
-     * Get collaboration network
+     * Získá síť spolupráce
      * 
      * @param int $authorId
      * @param int $depth
@@ -102,7 +142,7 @@ class AuthorService extends BaseService implements IAuthorService
     }
     
     /**
-     * Get top authors by metric
+     * Získá nejlepší autory podle metriky
      * 
      * @param string $metric
      * @param int $limit

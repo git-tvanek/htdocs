@@ -9,12 +9,14 @@ use App\Model\Screenshot;
 use App\Repository\AddonRepository;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
+use App\Factory\AddonFactory;
+use App\Factory\ScreenshotFactory;
 use Nette\Utils\Strings;
 use Nette\Http\FileUpload;
 use Nette\Utils\FileSystem;
 
 /**
- * Addon service implementation
+ * Implementace služby pro doplňky
  * 
  * @extends BaseService<Addon>
  * @implements IAddonService
@@ -24,27 +26,39 @@ class AddonService extends BaseService implements IAddonService
     /** @var AddonRepository */
     private AddonRepository $addonRepository;
     
+    /** @var AddonFactory */
+    private AddonFactory $addonFactory;
+    
+    /** @var ScreenshotFactory */
+    private ScreenshotFactory $screenshotFactory;
+    
     /** @var string */
     private string $uploadsDir;
     
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param AddonRepository $addonRepository
+     * @param AddonFactory $addonFactory
+     * @param ScreenshotFactory $screenshotFactory
      * @param string $uploadsDir
      */
     public function __construct(
         AddonRepository $addonRepository,
+        AddonFactory $addonFactory,
+        ScreenshotFactory $screenshotFactory,
         string $uploadsDir = 'uploads'
     ) {
         parent::__construct();
         $this->addonRepository = $addonRepository;
+        $this->addonFactory = $addonFactory;
+        $this->screenshotFactory = $screenshotFactory;
         $this->entityClass = Addon::class;
         $this->uploadsDir = $uploadsDir;
     }
     
     /**
-     * Get repository for entity
+     * Získá repozitář pro entitu
      * 
      * @return AddonRepository
      */
@@ -54,7 +68,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Find addon by slug
+     * Najde doplněk podle slugu
      * 
      * @param string $slug
      * @return Addon|null
@@ -65,7 +79,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Find addons by category
+     * Najde doplňky podle kategorie
      * 
      * @param int $categoryId
      * @param int $page
@@ -78,7 +92,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Find addons by author
+     * Najde doplňky podle autora
      * 
      * @param int $authorId
      * @param int $page
@@ -91,7 +105,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Find popular addons
+     * Najde populární doplňky
      * 
      * @param int $limit
      * @return Collection<Addon>
@@ -102,7 +116,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Find top rated addons
+     * Najde nejlépe hodnocené doplňky
      * 
      * @param int $limit
      * @return Collection<Addon>
@@ -113,7 +127,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Find newest addons
+     * Najde nejnovější doplňky
      * 
      * @param int $limit
      * @return Collection<Addon>
@@ -124,7 +138,7 @@ class AddonService extends BaseService implements IAddonService
     }
     
     /**
-     * Search addons by keyword
+     * Vyhledá doplňky podle klíčového slova
      * 
      * @param string $query
      * @param int $page
@@ -136,24 +150,24 @@ class AddonService extends BaseService implements IAddonService
         return $this->addonRepository->search($query, $page, $itemsPerPage);
     }
     
-/**
- * Increment download count
- * 
- * @param int $id
- * @return int Number of affected rows
- */
-public function incrementDownloadCount(int $id): int
-{
-    return $this->addonRepository->incrementDownloadCount($id);
-}
+    /**
+     * Zvýší počet stažení
+     * 
+     * @param int $id
+     * @return int Počet ovlivněných řádků
+     */
+    public function incrementDownloadCount(int $id): int
+    {
+        return $this->addonRepository->incrementDownloadCount($id);
+    }
     
     /**
-     * Save addon with related data
+     * Uloží doplněk s přidruženými daty
      * 
      * @param Addon $addon
      * @param array $screenshots
      * @param array $tagIds
-     * @param array $uploads Screenshots and icon files
+     * @param array $uploads Nahrané soubory (screenshoty a ikony)
      * @return int
      * @throws \Exception
      */
@@ -163,7 +177,7 @@ public function incrementDownloadCount(int $id): int
         array $tagIds = [],
         array $uploads = []
     ): int {
-        // Handle file uploads
+        // Zpracování nahraných souborů
         if (isset($uploads['icon']) && $uploads['icon'] instanceof FileUpload && $uploads['icon']->isOk()) {
             $iconPath = $this->processImageUpload($uploads['icon'], 'icons');
             $addon->icon_url = $iconPath;
@@ -174,7 +188,7 @@ public function incrementDownloadCount(int $id): int
             $addon->fanart_url = $fanartPath;
         }
         
-        // Process screenshot uploads
+        // Zpracování screenshotů
         $processedScreenshots = [];
         if (!empty($uploads['screenshots'])) {
             foreach ($uploads['screenshots'] as $index => $screenshotUpload) {
@@ -191,12 +205,12 @@ public function incrementDownloadCount(int $id): int
             }
         }
         
-        // Ensure slug is set
+        // Zajištění, že slug je nastaven
         if (empty($addon->slug)) {
             $addon->slug = Strings::webalize($addon->name);
         }
         
-        // Save to database
+        // Uložení do databáze
         if (isset($addon->id)) {
             return $this->addonRepository->updateWithRelated($addon, $processedScreenshots, $tagIds);
         } else {
@@ -205,7 +219,7 @@ public function incrementDownloadCount(int $id): int
     }
     
     /**
-     * Get addon with related data
+     * Získá doplněk s přidruženými daty
      * 
      * @param int $id
      * @return array|null
@@ -216,7 +230,7 @@ public function incrementDownloadCount(int $id): int
     }
     
     /**
-     * Find similar addons
+     * Najde podobné doplňky
      * 
      * @param int $addonId
      * @param int $limit
@@ -228,7 +242,7 @@ public function incrementDownloadCount(int $id): int
     }
     
     /**
-     * Advanced search
+     * Pokročilé vyhledávání
      * 
      * @param string $query
      * @param array $fields
@@ -248,7 +262,7 @@ public function incrementDownloadCount(int $id): int
     }
     
     /**
-     * Process image upload
+     * Zpracuje nahraný obrázek
      * 
      * @param FileUpload $file
      * @param string $subdir
@@ -257,26 +271,26 @@ public function incrementDownloadCount(int $id): int
      */
     private function processImageUpload(FileUpload $file, string $subdir): string
     {
-        // Check if it's an image
+        // Kontrola, zda jde o obrázek
         if (!$file->isImage()) {
-            throw new \Exception('Uploaded file is not an image');
+            throw new \Exception('Nahraný soubor není obrázek');
         }
         
-        // Create target directory if it doesn't exist
+        // Vytvoření cílového adresáře, pokud neexistuje
         $dir = $this->uploadsDir . '/' . $subdir;
         if (!is_dir($dir)) {
             FileSystem::createDir($dir);
         }
         
-        // Generate unique filename
+        // Generování unikátního názvu souboru
         $ext = strtolower(pathinfo($file->getSanitizedName(), PATHINFO_EXTENSION));
         $filename = md5(uniqid('', true)) . '.' . $ext;
         $filepath = $dir . '/' . $filename;
         
-        // Save file
+        // Uložení souboru
         $file->move($filepath);
         
-        // Return relative path for storage
+        // Vrácení relativní cesty pro uložení
         return $subdir . '/' . $filename;
     }
 }

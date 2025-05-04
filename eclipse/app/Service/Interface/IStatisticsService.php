@@ -5,36 +5,36 @@ declare(strict_types=1);
 namespace App\Service;
 
 /**
- * Interface for statistics service
+ * Rozhraní služby pro statistiky
  */
 interface IStatisticsService
 {
     /**
-     * Get addon statistics over time
+     * Získá statistiky doplňků v průběhu času
      * 
-     * @param string $interval 'day', 'week', 'month', or 'year'
-     * @param int $limit Number of intervals to return
-     * @param string $metric 'downloads', 'ratings', or 'addons'
+     * @param string $interval 'day', 'week', 'month', nebo 'year'
+     * @param int $limit Počet intervalů k vrácení
+     * @param string $metric 'downloads', 'ratings', nebo 'addons'
      * @return array
      */
     public function getAddonStatisticsOverTime(string $interval = 'month', int $limit = 12, string $metric = 'downloads'): array;
     
     /**
-     * Get addon distribution by category
+     * Získá distribuci doplňků podle kategorie
      * 
      * @return array
      */
     public function getAddonDistributionByCategory(): array;
     
     /**
-     * Get rating distribution
+     * Získá distribuci hodnocení
      * 
      * @return array
      */
     public function getRatingDistribution(): array;
     
     /**
-     * Get top authors by download count
+     * Získá nejlepší autory podle počtu stažení
      * 
      * @param int $limit
      * @return array
@@ -42,7 +42,7 @@ interface IStatisticsService
     public function getTopAuthorsByDownloads(int $limit = 10): array;
     
     /**
-     * Get dashboard statistics
+     * Získá statistiky pro dashboard
      * 
      * @return array
      */

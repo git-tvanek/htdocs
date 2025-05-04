@@ -8,9 +8,10 @@ use App\Model\AddonReview;
 use App\Repository\ReviewRepository;
 use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
+use App\Factory\ReviewFactory;
 
 /**
- * Review service implementation
+ * Implementace služby pro recenze
  * 
  * @extends BaseService<AddonReview>
  * @implements IReviewService
@@ -20,20 +21,27 @@ class ReviewService extends BaseService implements IReviewService
     /** @var ReviewRepository */
     private ReviewRepository $reviewRepository;
     
+    /** @var ReviewFactory */
+    private ReviewFactory $reviewFactory;
+    
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param ReviewRepository $reviewRepository
+     * @param ReviewFactory $reviewFactory
      */
-    public function __construct(ReviewRepository $reviewRepository)
-    {
+    public function __construct(
+        ReviewRepository $reviewRepository,
+        ReviewFactory $reviewFactory
+    ) {
         parent::__construct();
         $this->reviewRepository = $reviewRepository;
+        $this->reviewFactory = $reviewFactory;
         $this->entityClass = AddonReview::class;
     }
     
     /**
-     * Get repository for entity
+     * Získá repozitář pro entitu
      * 
      * @return ReviewRepository
      */
@@ -43,7 +51,38 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Find reviews by addon
+     * Vytvoří novou recenzi od přihlášeného uživatele
+     * 
+     * @param int $addonId ID doplňku
+     * @param int $userId ID uživatele
+     * @param int $rating Hodnocení (1-5)
+     * @param string|null $comment Komentář (volitelný)
+     * @return int ID vytvořené recenze
+     */
+    public function createFromUser(int $addonId, int $userId, int $rating, ?string $comment = null): int
+    {
+        $review = $this->reviewFactory->createFromUser($addonId, $userId, $rating, $comment);
+        return $this->reviewRepository->create($review);
+    }
+    
+    /**
+     * Vytvoří novou recenzi od anonymního uživatele
+     * 
+     * @param int $addonId ID doplňku
+     * @param string $name Jméno uživatele
+     * @param string|null $email E-mail uživatele (volitelný)
+     * @param int $rating Hodnocení (1-5)
+     * @param string|null $comment Komentář (volitelný)
+     * @return int ID vytvořené recenze
+     */
+    public function createFromGuest(int $addonId, string $name, ?string $email, int $rating, ?string $comment = null): int
+    {
+        $review = $this->reviewFactory->createFromGuest($addonId, $name, $email, $rating, $comment);
+        return $this->reviewRepository->create($review);
+    }
+    
+    /**
+     * Najde recenze podle doplňku
      * 
      * @param int $addonId
      * @return Collection<AddonReview>
@@ -54,7 +93,7 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Find reviews with filters
+     * Najde recenze s filtry
      * 
      * @param array $filters
      * @param string $sortBy
@@ -80,7 +119,7 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Get sentiment analysis
+     * Získá analýzu sentimentu
      * 
      * @param int $addonId
      * @return array
@@ -91,7 +130,7 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Get review activity over time
+     * Získá aktivitu recenzí v průběhu času
      * 
      * @param int $addonId
      * @param string $interval
@@ -104,7 +143,7 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Get most recent reviews
+     * Získá nejnovější recenze
      * 
      * @param int $limit
      * @return array
@@ -115,7 +154,7 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Get reviews by rating
+     * Získá recenze podle hodnocení
      * 
      * @param int $rating
      * @param int $page
@@ -128,7 +167,7 @@ class ReviewService extends BaseService implements IReviewService
     }
     
     /**
-     * Find common keywords in reviews
+     * Najde běžná klíčová slova v recenzích
      * 
      * @param int $addonId
      * @param int $limit

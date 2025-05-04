@@ -12,7 +12,9 @@ use Nette\Database\Explorer;
 use Nette\Utils\DateTime;
 
 /**
- * Statistics service implementation
+ * Implementace služby pro statistiky
+ * 
+ * @implements IStatisticsService
  */
 class StatisticsService implements IStatisticsService
 {
@@ -32,7 +34,7 @@ class StatisticsService implements IStatisticsService
     private Explorer $database;
     
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param AddonRepository $addonRepository
      * @param AuthorRepository $authorRepository
@@ -55,11 +57,11 @@ class StatisticsService implements IStatisticsService
     }
     
     /**
-     * Get addon statistics over time
+     * Získá statistiky doplňků v průběhu času
      * 
-     * @param string $interval 'day', 'week', 'month', or 'year'
-     * @param int $limit Number of intervals to return
-     * @param string $metric 'downloads', 'ratings', or 'addons'
+     * @param string $interval 'day', 'week', 'month', nebo 'year'
+     * @param int $limit Počet intervalů k vrácení
+     * @param string $metric 'downloads', 'ratings', nebo 'addons'
      * @return array
      */
     public function getAddonStatisticsOverTime(string $interval = 'month', int $limit = 12, string $metric = 'downloads'): array
@@ -68,7 +70,7 @@ class StatisticsService implements IStatisticsService
     }
     
     /**
-     * Get addon distribution by category
+     * Získá distribuci doplňků podle kategorie
      * 
      * @return array
      */
@@ -78,7 +80,7 @@ class StatisticsService implements IStatisticsService
     }
     
     /**
-     * Get rating distribution
+     * Získá distribuci hodnocení
      * 
      * @return array
      */
@@ -88,7 +90,7 @@ class StatisticsService implements IStatisticsService
     }
     
     /**
-     * Get top authors by download count
+     * Získá nejlepší autory podle počtu stažení
      * 
      * @param int $limit
      * @return array
@@ -99,43 +101,43 @@ class StatisticsService implements IStatisticsService
     }
     
     /**
-     * Get dashboard statistics
+     * Získá statistiky pro dashboard
      * 
      * @return array
      */
     public function getDashboardStatistics(): array
     {
-        // Count total addons
+        // Počet celkových doplňků
         $totalAddons = $this->database->table('addons')->count();
         
-        // Count total authors
+        // Počet celkových autorů
         $totalAuthors = $this->database->table('authors')->count();
         
-        // Count total categories
+        // Počet celkových kategorií
         $totalCategories = $this->database->table('categories')->count();
         
-        // Count total reviews
+        // Počet celkových recenzí
         $totalReviews = $this->database->table('addon_reviews')->count();
         
-        // Get average rating
+        // Získat průměrné hodnocení
         $avgRating = $this->database->table('addon_reviews')
             ->select('AVG(rating) AS avg_rating')
             ->fetch();
         
-        // Get total downloads
+        // Získat celkový počet stažení
         $totalDownloads = $this->database->table('addons')
             ->sum('downloads_count') ?? 0;
         
-        // Get newest addons (last 30 days)
+        // Získat nejnovější doplňky (posledních 30 dní)
         $thirtyDaysAgo = (new DateTime())->modify('-30 days');
         $newAddonsCount = $this->database->table('addons')
             ->where('created_at >= ?', $thirtyDaysAgo->format('Y-m-d H:i:s'))
             ->count();
         
-        // Get most popular categories
+        // Získat nejpopulárnější kategorie
         $popularCategories = $this->categoryRepository->getMostPopularCategories(5);
         
-        // Get recent reviews
+        // Získat nejnovější recenze
         $recentReviews = $this->reviewRepository->getMostRecentReviews(5);
         
         return [

@@ -7,9 +7,10 @@ namespace App\Service;
 use App\Model\Tag;
 use App\Repository\TagRepository;
 use App\Collection\PaginatedCollection;
+use App\Factory\TagFactory;
 
 /**
- * Tag service implementation
+ * Implementace služby pro tagy
  * 
  * @extends BaseService<Tag>
  * @implements ITagService
@@ -19,20 +20,27 @@ class TagService extends BaseService implements ITagService
     /** @var TagRepository */
     private TagRepository $tagRepository;
     
+    /** @var TagFactory */
+    private TagFactory $tagFactory;
+    
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param TagRepository $tagRepository
+     * @param TagFactory $tagFactory
      */
-    public function __construct(TagRepository $tagRepository)
-    {
+    public function __construct(
+        TagRepository $tagRepository,
+        TagFactory $tagFactory
+    ) {
         parent::__construct();
         $this->tagRepository = $tagRepository;
+        $this->tagFactory = $tagFactory;
         $this->entityClass = Tag::class;
     }
     
     /**
-     * Get repository for entity
+     * Získá repozitář pro entitu
      * 
      * @return TagRepository
      */
@@ -42,7 +50,49 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Find tag by slug
+     * Vytvoří nový tag
+     * 
+     * @param array $data
+     * @return int ID vytvořeného tagu
+     */
+    public function create(array $data): int
+    {
+        $tag = $this->tagFactory->create($data);
+        return $this->tagRepository->create($tag);
+    }
+    
+    /**
+     * Vytvoří tag pouze s názvem
+     * 
+     * @param string $name
+     * @return int ID vytvořeného tagu
+     */
+    public function createWithName(string $name): int
+    {
+        $tag = $this->tagFactory->createWithName($name);
+        return $this->tagRepository->create($tag);
+    }
+    
+    /**
+     * Vytvoří více tagů najednou
+     * 
+     * @param array $names Pole názvů tagů
+     * @return array Pole ID vytvořených tagů
+     */
+    public function createBatch(array $names): array
+    {
+        $ids = [];
+        $tags = $this->tagFactory->createBatch($names);
+        
+        foreach ($tags as $tag) {
+            $ids[] = $this->tagRepository->create($tag);
+        }
+        
+        return $ids;
+    }
+    
+    /**
+     * Najde tag podle slugu
      * 
      * @param string $slug
      * @return Tag|null
@@ -53,10 +103,10 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Find or create a tag
+     * Najde nebo vytvoří tag
      * 
      * @param string $name
-     * @return int ID of the tag
+     * @return int ID tagu
      */
     public function findOrCreate(string $name): int
     {
@@ -64,7 +114,7 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Get tags with counts
+     * Získá tagy s počty
      * 
      * @return array
      */
@@ -74,7 +124,7 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Find addons by tag
+     * Najde doplňky podle tagu
      * 
      * @param int $tagId
      * @param int $page
@@ -87,7 +137,7 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Find related tags
+     * Najde související tagy
      * 
      * @param int $tagId
      * @param int $limit
@@ -99,10 +149,10 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Get trending tags
+     * Získá trendové tagy
      * 
-     * @param int $days Number of days to look back
-     * @param int $limit Maximum number of tags to return
+     * @param int $days Počet dní dozadu
+     * @param int $limit Maximální počet tagů k vrácení
      * @return array
      */
     public function getTrendingTags(int $days = 30, int $limit = 10): array
@@ -111,10 +161,10 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Generate a weighted tag cloud
+     * Vygeneruje vážený tag cloud
      * 
-     * @param int $limit Maximum number of tags to include
-     * @param int|null $categoryId Optional category ID to filter by
+     * @param int $limit Maximální počet tagů k zahrnutí
+     * @param int|null $categoryId Volitelné ID kategorie pro filtrování
      * @return array
      */
     public function generateTagCloud(int $limit = 50, ?int $categoryId = null): array
@@ -123,7 +173,7 @@ class TagService extends BaseService implements ITagService
     }
     
     /**
-     * Find tags by multiple categories
+     * Najde tagy podle více kategorií
      * 
      * @param array $categoryIds
      * @param int $limit

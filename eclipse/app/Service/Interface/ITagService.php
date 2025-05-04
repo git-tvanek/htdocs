@@ -8,12 +8,38 @@ use App\Model\Tag;
 use App\Collection\PaginatedCollection;
 
 /**
- * Interface for tag service
+ * Rozhraní služby pro tagy
+ * 
+ * @extends IBaseService<Tag>
  */
 interface ITagService extends IBaseService
 {
     /**
-     * Find tag by slug
+     * Vytvoří nový tag
+     * 
+     * @param array $data
+     * @return int ID vytvořeného tagu
+     */
+    public function create(array $data): int;
+    
+    /**
+     * Vytvoří tag pouze s názvem
+     * 
+     * @param string $name
+     * @return int ID vytvořeného tagu
+     */
+    public function createWithName(string $name): int;
+    
+    /**
+     * Vytvoří více tagů najednou
+     * 
+     * @param array $names Pole názvů tagů
+     * @return array Pole ID vytvořených tagů
+     */
+    public function createBatch(array $names): array;
+    
+    /**
+     * Najde tag podle slugu
      * 
      * @param string $slug
      * @return Tag|null
@@ -21,22 +47,22 @@ interface ITagService extends IBaseService
     public function findBySlug(string $slug): ?Tag;
     
     /**
-     * Find or create a tag
+     * Najde nebo vytvoří tag
      * 
      * @param string $name
-     * @return int ID of the tag
+     * @return int ID tagu
      */
     public function findOrCreate(string $name): int;
     
     /**
-     * Get tags with counts
+     * Získá tagy s počty
      * 
      * @return array
      */
     public function getTagsWithCounts(): array;
     
     /**
-     * Find addons by tag
+     * Najde doplňky podle tagu
      * 
      * @param int $tagId
      * @param int $page
@@ -46,7 +72,7 @@ interface ITagService extends IBaseService
     public function findAddonsByTag(int $tagId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection;
     
     /**
-     * Find related tags
+     * Najde související tagy
      * 
      * @param int $tagId
      * @param int $limit
@@ -55,25 +81,25 @@ interface ITagService extends IBaseService
     public function findRelatedTags(int $tagId, int $limit = 10): array;
     
     /**
-     * Get trending tags
+     * Získá trendové tagy
      * 
-     * @param int $days Number of days to look back
-     * @param int $limit Maximum number of tags to return
+     * @param int $days Počet dní dozadu
+     * @param int $limit Maximální počet tagů k vrácení
      * @return array
      */
     public function getTrendingTags(int $days = 30, int $limit = 10): array;
     
     /**
-     * Generate a weighted tag cloud
+     * Vygeneruje vážený tag cloud
      * 
-     * @param int $limit Maximum number of tags to include
-     * @param int|null $categoryId Optional category ID to filter by
+     * @param int $limit Maximální počet tagů k zahrnutí
+     * @param int|null $categoryId Volitelné ID kategorie pro filtrování
      * @return array
      */
     public function generateTagCloud(int $limit = 50, ?int $categoryId = null): array;
     
     /**
-     * Find tags by multiple categories
+     * Najde tagy podle více kategorií
      * 
      * @param array $categoryIds
      * @param int $limit

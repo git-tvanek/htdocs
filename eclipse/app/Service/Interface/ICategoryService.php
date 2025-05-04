@@ -8,12 +8,51 @@ use App\Model\Category;
 use App\Collection\Collection;
 
 /**
- * Interface for category service
+ * Rozhraní služby pro kategorie
+ * 
+ * @extends IBaseService<Category>
  */
 interface ICategoryService extends IBaseService
 {
     /**
-     * Find category by slug
+     * Vytvoří novou kategorii
+     * 
+     * @param array $data
+     * @return int ID vytvořené kategorie
+     */
+    public function create(array $data): int;
+    
+    /**
+     * Vytvoří kořenovou kategorii
+     * 
+     * @param string $name
+     * @param string|null $slug
+     * @return int ID vytvořené kategorie
+     */
+    public function createRoot(string $name, ?string $slug = null): int;
+    
+    /**
+     * Vytvoří podkategorii
+     * 
+     * @param string $name
+     * @param int $parentId
+     * @param string|null $slug
+     * @return int ID vytvořené kategorie
+     */
+    public function createSubcategory(string $name, int $parentId, ?string $slug = null): int;
+    
+    /**
+     * Aktualizuje existující kategorii
+     * 
+     * @param int $id
+     * @param array $data
+     * @return int ID aktualizované kategorie
+     * @throws \Exception
+     */
+    public function update(int $id, array $data): int;
+    
+    /**
+     * Najde kategorii podle slugu
      * 
      * @param string $slug
      * @return Category|null
@@ -21,14 +60,14 @@ interface ICategoryService extends IBaseService
     public function findBySlug(string $slug): ?Category;
     
     /**
-     * Find root categories
+     * Najde kořenové kategorie
      * 
      * @return Collection<Category>
      */
     public function findRootCategories(): Collection;
     
     /**
-     * Find subcategories
+     * Najde podkategorie
      * 
      * @param int $parentId
      * @return Collection<Category>
@@ -36,7 +75,7 @@ interface ICategoryService extends IBaseService
     public function findSubcategories(int $parentId): Collection;
     
     /**
-     * Find all subcategories recursively
+     * Najde všechny podkategorie rekurzivně
      * 
      * @param int $categoryId
      * @return Collection<Category>
@@ -44,7 +83,7 @@ interface ICategoryService extends IBaseService
     public function findAllSubcategoriesRecursive(int $categoryId): Collection;
     
     /**
-     * Get category path (breadcrumbs)
+     * Získá cestu ke kategorii (drobečková navigace)
      * 
      * @param int $categoryId
      * @return Collection<Category>
@@ -52,14 +91,14 @@ interface ICategoryService extends IBaseService
     public function getCategoryPath(int $categoryId): Collection;
     
     /**
-     * Get category hierarchy
+     * Získá hierarchii kategorií
      * 
      * @return array
      */
     public function getHierarchy(): array;
     
     /**
-     * Get most popular categories
+     * Získá nejpopulárnější kategorie
      * 
      * @param int $limit
      * @return array
@@ -67,7 +106,7 @@ interface ICategoryService extends IBaseService
     public function getMostPopularCategories(int $limit = 10): array;
     
     /**
-     * Get category hierarchy with stats
+     * Získá hierarchii kategorií se statistikami
      * 
      * @return array
      */

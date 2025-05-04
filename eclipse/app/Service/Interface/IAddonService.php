@@ -9,12 +9,14 @@ use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
 
 /**
- * Interface for addon service
+ * Rozhraní služby pro doplňky
+ * 
+ * @extends IBaseService<Addon>
  */
 interface IAddonService extends IBaseService
 {
     /**
-     * Find addon by slug
+     * Najde doplněk podle slugu
      * 
      * @param string $slug
      * @return Addon|null
@@ -22,7 +24,7 @@ interface IAddonService extends IBaseService
     public function findBySlug(string $slug): ?Addon;
     
     /**
-     * Find addons by category
+     * Najde doplňky podle kategorie
      * 
      * @param int $categoryId
      * @param int $page
@@ -32,7 +34,7 @@ interface IAddonService extends IBaseService
     public function findByCategory(int $categoryId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection;
     
     /**
-     * Find addons by author
+     * Najde doplňky podle autora
      * 
      * @param int $authorId
      * @param int $page
@@ -42,7 +44,7 @@ interface IAddonService extends IBaseService
     public function findByAuthor(int $authorId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection;
     
     /**
-     * Find popular addons
+     * Najde populární doplňky
      * 
      * @param int $limit
      * @return Collection<Addon>
@@ -50,7 +52,7 @@ interface IAddonService extends IBaseService
     public function findPopular(int $limit = 10): Collection;
     
     /**
-     * Find top rated addons
+     * Najde nejlépe hodnocené doplňky
      * 
      * @param int $limit
      * @return Collection<Addon>
@@ -58,7 +60,7 @@ interface IAddonService extends IBaseService
     public function findTopRated(int $limit = 10): Collection;
     
     /**
-     * Find newest addons
+     * Najde nejnovější doplňky
      * 
      * @param int $limit
      * @return Collection<Addon>
@@ -66,7 +68,7 @@ interface IAddonService extends IBaseService
     public function findNewest(int $limit = 10): Collection;
     
     /**
-     * Search addons by keyword
+     * Vyhledá doplňky podle klíčového slova
      * 
      * @param string $query
      * @param int $page
@@ -75,22 +77,23 @@ interface IAddonService extends IBaseService
      */
     public function search(string $query, int $page = 1, int $itemsPerPage = 10): PaginatedCollection;
     
-   /**
- * Increment download count
- * 
- * @param int $id
- * @return int
- */
+    /**
+     * Zvýší počet stažení
+     * 
+     * @param int $id
+     * @return int Počet ovlivněných řádků
+     */
     public function incrementDownloadCount(int $id): int;
     
     /**
-     * Save addon with related data
+     * Uloží doplněk s přidruženými daty
      * 
      * @param Addon $addon
      * @param array $screenshots
      * @param array $tagIds
-     * @param array $uploads Screenshots and icon files
-     * @return int
+     * @param array $uploads Nahrané soubory (screenshoty a ikony)
+     * @return int ID doplňku
+     * @throws \Exception
      */
     public function saveWithRelated(
         Addon $addon, 
@@ -100,7 +103,7 @@ interface IAddonService extends IBaseService
     ): int;
     
     /**
-     * Get addon with related data
+     * Získá doplněk s přidruženými daty
      * 
      * @param int $id
      * @return array|null
@@ -108,7 +111,7 @@ interface IAddonService extends IBaseService
     public function getWithRelated(int $id): ?array;
     
     /**
-     * Find similar addons
+     * Najde podobné doplňky
      * 
      * @param int $addonId
      * @param int $limit
@@ -117,7 +120,7 @@ interface IAddonService extends IBaseService
     public function findSimilarAddons(int $addonId, int $limit = 5): Collection;
     
     /**
-     * Advanced search
+     * Pokročilé vyhledávání
      * 
      * @param string $query
      * @param array $fields

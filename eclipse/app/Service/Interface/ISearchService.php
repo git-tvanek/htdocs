@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Service;
 
 /**
- * Interface for search service
+ * Rozhraní služby pro vyhledávání
  */
 interface ISearchService
 {
     /**
-     * Perform a simple search
+     * Provede jednoduché vyhledávání
      * 
      * @param string $query
      * @param int $page
@@ -20,7 +20,7 @@ interface ISearchService
     public function search(string $query, int $page = 1, int $itemsPerPage = 10): array;
     
     /**
-     * Perform an advanced search
+     * Provede pokročilé vyhledávání
      * 
      * @param string $query
      * @param array $filters

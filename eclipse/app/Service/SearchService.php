@@ -7,9 +7,12 @@ namespace App\Service;
 use App\Repository\AddonRepository;
 use App\Repository\AuthorRepository;
 use App\Repository\TagRepository;
+use App\Repository\CategoryRepository;
 
 /**
- * Search service implementation
+ * Implementace služby pro vyhledávání
+ * 
+ * @implements ISearchService
  */
 class SearchService implements ISearchService
 {
@@ -22,25 +25,31 @@ class SearchService implements ISearchService
     /** @var TagRepository */
     private TagRepository $tagRepository;
     
+    /** @var CategoryRepository */
+    private CategoryRepository $categoryRepository;
+    
     /**
-     * Constructor
+     * Konstruktor
      * 
      * @param AddonRepository $addonRepository
      * @param AuthorRepository $authorRepository
      * @param TagRepository $tagRepository
+     * @param CategoryRepository $categoryRepository
      */
     public function __construct(
         AddonRepository $addonRepository,
         AuthorRepository $authorRepository,
-        TagRepository $tagRepository
+        TagRepository $tagRepository,
+        CategoryRepository $categoryRepository
     ) {
         $this->addonRepository = $addonRepository;
         $this->authorRepository = $authorRepository;
         $this->tagRepository = $tagRepository;
+        $this->categoryRepository = $categoryRepository;
     }
     
     /**
-     * Perform a simple search
+     * Provede jednoduché vyhledávání
      * 
      * @param string $query
      * @param int $page
@@ -49,13 +58,13 @@ class SearchService implements ISearchService
      */
     public function search(string $query, int $page = 1, int $itemsPerPage = 10): array
     {
-        // Search for addons
+        // Vyhledávání doplňků
         $addons = $this->addonRepository->search($query, $page, $itemsPerPage);
         
-        // Find relevant tags
+        // Nalezení relevantních tagů
         $tags = $this->findRelevantTags($query, 5);
         
-        // Find relevant authors
+        // Nalezení relevantních autorů
         $authors = $this->findRelevantAuthors($query, 3);
         
         return [
@@ -67,7 +76,7 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Perform an advanced search
+     * Provede pokročilé vyhledávání
      * 
      * @param string $query
      * @param array $filters
@@ -81,11 +90,11 @@ class SearchService implements ISearchService
         int $page = 1, 
         int $itemsPerPage = 10
     ): array {
-        // Search for addons with advanced filtering
+        // Vyhledávání doplňků s pokročilým filtrováním
         $fields = ['name', 'description'];
         $addons = $this->addonRepository->advancedSearch($query, $fields, $filters, $page, $itemsPerPage);
         
-        // Get possible filter options
+        // Získání možných možností filtrů
         $filterOptions = $this->getFilterOptions();
         
         return [
@@ -97,7 +106,7 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Find relevant tags based on query
+     * Najde relevantní tagy na základě dotazu
      * 
      * @param string $query
      * @param int $limit
@@ -105,7 +114,7 @@ class SearchService implements ISearchService
      */
     private function findRelevantTags(string $query, int $limit): array
     {
-        // Basic implementation to find tags by partial name match
+        // Základní implementace pro nalezení tagů podle částečné shody názvu
         $tags = $this->tagRepository->findWithFilters(
             ['name' => $query],
             'name',
@@ -118,7 +127,7 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Find relevant authors based on query
+     * Najde relevantní autory na základě dotazu
      * 
      * @param string $query
      * @param int $limit
@@ -126,7 +135,7 @@ class SearchService implements ISearchService
      */
     private function findRelevantAuthors(string $query, int $limit): array
     {
-        // Basic implementation to find authors by partial name match
+        // Základní implementace pro nalezení autorů podle částečné shody jména
         $authors = $this->authorRepository->findWithFilters(
             ['name' => $query],
             'name',
@@ -139,7 +148,7 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Get filter options for advanced search
+     * Získá možnosti filtrů pro pokročilé vyhledávání
      * 
      * @return array
      */
@@ -154,7 +163,7 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Get category options for filters
+     * Získá možnosti kategorií pro filtry
      * 
      * @return array
      */
@@ -175,46 +184,46 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Get tag options for filters
+     * Získá možnosti tagů pro filtry
      * 
      * @return array
      */
     private function getTagOptions(): array
     {
         $tagCounts = $this->tagRepository->getTagsWithCounts();
-        return array_slice($tagCounts, 0, 20); // Return top 20 tags
+        return array_slice($tagCounts, 0, 20); // Vrátí 20 nejpoužívanějších tagů
     }
     
     /**
-     * Get rating options for filters
+     * Získá možnosti hodnocení pro filtry
      * 
      * @return array
      */
     private function getRatingOptions(): array
     {
         return [
-            ['value' => 5, 'label' => '5 stars'],
-            ['value' => 4, 'label' => '4+ stars'],
-            ['value' => 3, 'label' => '3+ stars'],
-            ['value' => 2, 'label' => '2+ stars'],
-            ['value' => 1, 'label' => '1+ stars']
+            ['value' => 5, 'label' => '5 hvězdiček'],
+            ['value' => 4, 'label' => '4+ hvězdiček'],
+            ['value' => 3, 'label' => '3+ hvězdiček'],
+            ['value' => 2, 'label' => '2+ hvězdiček'],
+            ['value' => 1, 'label' => '1+ hvězdiček']
         ];
     }
     
     /**
-     * Get sort options
+     * Získá možnosti řazení
      * 
      * @return array
      */
     private function getSortOptions(): array
     {
         return [
-            ['field' => 'name', 'direction' => 'ASC', 'label' => 'Name (A-Z)'],
-            ['field' => 'name', 'direction' => 'DESC', 'label' => 'Name (Z-A)'],
-            ['field' => 'downloads_count', 'direction' => 'DESC', 'label' => 'Most Downloaded'],
-            ['field' => 'rating', 'direction' => 'DESC', 'label' => 'Highest Rated'],
-            ['field' => 'created_at', 'direction' => 'DESC', 'label' => 'Newest First'],
-            ['field' => 'created_at', 'direction' => 'ASC', 'label' => 'Oldest First']
+            ['field' => 'name', 'direction' => 'ASC', 'label' => 'Název (A-Z)'],
+            ['field' => 'name', 'direction' => 'DESC', 'label' => 'Název (Z-A)'],
+            ['field' => 'downloads_count', 'direction' => 'DESC', 'label' => 'Nejvíce stahované'],
+            ['field' => 'rating', 'direction' => 'DESC', 'label' => 'Nejlépe hodnocené'],
+            ['field' => 'created_at', 'direction' => 'DESC', 'label' => 'Nejnovější'],
+            ['field' => 'created_at', 'direction' => 'ASC', 'label' => 'Nejstarší']
         ];
     }
 }

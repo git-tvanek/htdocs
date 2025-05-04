@@ -8,12 +8,32 @@ use App\Model\Author;
 use App\Collection\PaginatedCollection;
 
 /**
- * Interface for author service
+ * Rozhraní služby pro autory
+ * 
+ * @extends IBaseService<Author>
  */
 interface IAuthorService extends IBaseService
 {
     /**
-     * Get author with addons
+     * Vytvoří nového autora
+     * 
+     * @param array $data
+     * @return int ID vytvořeného autora
+     */
+    public function create(array $data): int;
+    
+    /**
+     * Aktualizuje existujícího autora
+     * 
+     * @param int $id
+     * @param array $data
+     * @return int ID aktualizovaného autora
+     * @throws \Exception
+     */
+    public function update(int $id, array $data): int;
+    
+    /**
+     * Získá autora s jeho doplňky
      * 
      * @param int $id
      * @return array|null
@@ -21,7 +41,7 @@ interface IAuthorService extends IBaseService
     public function getWithAddons(int $id): ?array;
     
     /**
-     * Find authors with filters
+     * Najde autory s filtry
      * 
      * @param array $filters
      * @param string $sortBy
@@ -39,7 +59,7 @@ interface IAuthorService extends IBaseService
     ): PaginatedCollection;
     
     /**
-     * Get author statistics
+     * Získá statistiky autora
      * 
      * @param int $authorId
      * @return array
@@ -47,7 +67,7 @@ interface IAuthorService extends IBaseService
     public function getAuthorStatistics(int $authorId): array;
     
     /**
-     * Get collaboration network
+     * Získá síť spolupráce
      * 
      * @param int $authorId
      * @param int $depth
@@ -56,7 +76,7 @@ interface IAuthorService extends IBaseService
     public function getCollaborationNetwork(int $authorId, int $depth = 2): array;
     
     /**
-     * Get top authors by metric
+     * Získá nejlepší autory podle metriky
      * 
      * @param string $metric
      * @param int $limit
