@@ -419,4 +419,25 @@ class TagRepository extends BaseRepository implements ITagRepository
         
         return $tags;
     }
+
+    /**
+    * Najde tagy přiřazené k doplňku
+    * 
+    * @param int $addonId ID doplňku
+    * @return Collection<Tag>
+    */
+    public function findByAddon(int $addonId): Collection
+    {
+    $rows = $this->database->table('tags')
+        ->select('tags.*')
+        ->joinWhere('addon_tags', 'tags.id = addon_tags.tag_id')
+        ->where('addon_tags.addon_id', $addonId);
+
+    $tags = [];
+    foreach ($rows as $row) {
+        $tags[] = Tag::fromArray($row->toArray());
+    }
+    
+    return new Collection($tags);
+    }
 }

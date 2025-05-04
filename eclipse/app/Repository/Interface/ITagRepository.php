@@ -103,4 +103,12 @@ interface ITagRepository extends IBaseRepository
      * @return array
      */
     public function findTagsByCategories(array $categoryIds, int $limit = 20): array;
+
+    /**
+ * Najde tagy přiřazené k doplňku
+ * 
+ * @param int $addonId ID doplňku
+ * @return Collection<Tag>
+ */
+public function findByAddon(int $addonId): Collection;
 }

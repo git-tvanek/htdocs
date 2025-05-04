@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Model\Tag;
 use App\Repository\TagRepository;
+use App\Collection\Collection;
 use App\Collection\PaginatedCollection;
 use App\Factory\TagFactory;
 
@@ -183,4 +184,15 @@ class TagService extends BaseService implements ITagService
     {
         return $this->tagRepository->findTagsByCategories($categoryIds, $limit);
     }
+
+ /**
+ * Najde tagy přiřazené k doplňku
+ * 
+ * @param int $addonId ID doplňku
+ * @return Collection<Tag>
+ */
+public function findByAddon(int $addonId): Collection
+{
+    return $this->tagRepository->findByAddon($addonId);
+}
 }

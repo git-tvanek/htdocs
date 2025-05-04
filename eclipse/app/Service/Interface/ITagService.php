@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Collection\Collection;
 use App\Model\Tag;
 use App\Collection\PaginatedCollection;
 
@@ -106,4 +107,12 @@ interface ITagService extends IBaseService
      * @return array
      */
     public function findTagsByCategories(array $categoryIds, int $limit = 20): array;
+
+    /**
+    * Najde tagy přiřazené k doplňku
+    * 
+    * @param int $addonId
+    * @return Collection<Tag>
+    */
+    public function findByAddon(int $addonId): Collection;
 }
