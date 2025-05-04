@@ -1,5 +1,5 @@
 parameters:
-
+	uploadsDir: %appDir%/../www/uploads
 
 application:
 	errorPresenter:
@@ -9,8 +9,8 @@ application:
 
 
 database:
-	dsn: 'sqlite::memory:'
-	user:
+	dsn: 'mysql:host=localhost;dbname=eclipse'
+	user: root
 	password:
 
 

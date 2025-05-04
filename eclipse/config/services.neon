@@ -1,42 +1,84 @@
 services:
+	# Router factory
 	- App\Core\RouterFactory::createRouter
+
+	# Repositories
 	- App\Repository\AddonRepository
-    - App\Repository\AuthorRepository
-    - App\Repository\CategoryRepository
-    - App\Repository\ReviewRepository(@addonRepository)
-    - App\Repository\TagRepository
+	- App\Repository\AuthorRepository
+	- App\Repository\CategoryRepository
+	- App\Repository\ReviewRepository(@addonRepository, @database.default.explorer)
+	- App\Repository\TagRepository
+
+	# Factories
+	- App\Factory\AddonFactory
+	- App\Factory\AddonTagFactory
+	- App\Factory\AuthorFactory
+	- App\Factory\CategoryFactory
+	- App\Factory\ReviewFactory
+	- App\Factory\ScreenshotFactory
+	- App\Factory\TagFactory
 
 	# Services
-    addonService:
-        factory: App\Service\AddonService(@addonRepository, %uploadsDir%)
-    authorService:
-        factory: App\Service\AuthorService(@authorRepository)
-    categoryService:
-        factory: App\Service\CategoryService(@categoryRepository)
-    reviewService:
-        factory: App\Service\ReviewService(@reviewRepository)
-    tagService:
-        factory: App\Service\TagService(@tagRepository)
-    statisticsService:
-        factory: App\Service\StatisticsService(
-            @addonRepository, 
-            @authorRepository, 
-            @categoryRepository, 
-            @reviewRepository, 
-            @database.default.explorer
-        )
-    searchService:
-        factory: App\Service\SearchService(
-            @addonRepository, 
-            @authorRepository, 
-            @tagRepository
-        )
+	addonService:
+		factory: App\Service\AddonService(
+			@App\Repository\AddonRepository, 
+			@App\Factory\AddonFactory, 
+			@App\Factory\ScreenshotFactory, 
+			%uploadsDir%
+		)
+	authorService:
+		factory: App\Service\AuthorService(
+			@App\Repository\AuthorRepository, 
+			@App\Factory\AuthorFactory
+		)
+	categoryService:
+		factory: App\Service\CategoryService(
+			@App\Repository\CategoryRepository, 
+			@App\Factory\CategoryFactory
+		)
+	reviewService:
+		factory: App\Service\ReviewService(
+			@App\Repository\ReviewRepository, 
+			@App\Factory\ReviewFactory
+		)
+	tagService:
+		factory: App\Service\TagService(
+			@App\Repository\TagRepository, 
+			@App\Factory\TagFactory
+		)
+	statisticsService:
+		factory: App\Service\StatisticsService(
+			@App\Repository\AddonRepository, 
+			@App\Repository\AuthorRepository, 
+			@App\Repository\CategoryRepository, 
+			@App\Repository\ReviewRepository, 
+			@database.default.explorer
+		)
+	searchService:
+		factory: App\Service\SearchService(
+			@App\Repository\AddonRepository, 
+			@App\Repository\AuthorRepository, 
+			@App\Repository\TagRepository,
+			@App\Repository\CategoryRepository
+		)
 
+	# Facades
+	- App\Facade\AddonFacade
+	- App\Facade\AuthorFacade
+	- App\Facade\CategoryFacade
+	- App\Facade\ReviewFacade
+	- App\Facade\SearchFacade
+	- App\Facade\StatisticsFacade
+	- App\Facade\TagFacade
+
+	# DTO Mappers and Factories
+	- App\Dto\Mapper\AddonDtoMapper
+	- App\Dto\Factory\DtoFactory
 
 search:
-	-	in: %appDir%
-		classes:
-			- *Facade
-			- *Factory
-			- *Repository
-			- *Service
+	- in: %appDir%
+	  classes:
+		- *Facade
+		- *Factory
+		- *Repository
+		- *Service
