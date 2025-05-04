@@ -29,12 +29,12 @@ class TagForm
         // Základní informace
         $form->addText('name', 'Název tagu:')
             ->setRequired('Prosím zadejte název tagu.')
-            ->addRule(Form::MAX_LENGTH, 'Název může být maximálně %d znaků dlouhý.', 50);
+            ->addRule(Form::MaxLength, 'Název může být maximálně %d znaků dlouhý.', 50);
             
         $form->addText('slug', 'URL slug:')
             ->setRequired(false)
-            ->addRule(Form::PATTERN, 'Slug může obsahovat pouze malá písmena, čísla a pomlčky.', '[a-z0-9-]+')
-            ->addRule(Form::MAX_LENGTH, 'Slug může být maximálně %d znaků dlouhý.', 50)
+            ->addRule(Form::Pattern, 'Slug může obsahovat pouze malá písmena, čísla a pomlčky.', '[a-z0-9-]+')
+            ->addRule(Form::MaxLength, 'Slug může být maximálně %d znaků dlouhý.', 50)
             ->setOption('description', 'Ponechte prázdné pro automatické vygenerování.');
             
         // ID pro režim úpravy

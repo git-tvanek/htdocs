@@ -84,7 +84,7 @@ class SearchForm
         $form->addText('kodi_version', 'Verze Kodi:')
             ->setRequired(false)
             ->setHtmlAttribute('placeholder', 'např. 19.4')
-            ->addRule(Form::PATTERN, 'Verze musí být ve formátu X.Y.Z', '\d+(\.\d+)*');
+            ->addRule(Form::Pattern, 'Verze musí být ve formátu X.Y.Z', '\d+(\.\d+)*');
             
         // Řazení
         $form->addSelect('sort_by', 'Řadit podle:', [

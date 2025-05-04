@@ -58,12 +58,12 @@ class AddonForm
         // Základní informace
         $form->addText('name', 'Název doplňku:')
             ->setRequired('Prosím zadejte název doplňku.')
-            ->addRule(Form::MAX_LENGTH, 'Název může být maximálně %d znaků dlouhý.', 100);
+            ->addRule(Form::MaxLength, 'Název může být maximálně %d znaků dlouhý.', 100);
             
         $form->addText('slug', 'URL slug:')
             ->setRequired(false)
-            ->addRule(Form::PATTERN, 'Slug může obsahovat pouze malá písmena, čísla a pomlčky.', '[a-z0-9-]+')
-            ->addRule(Form::MAX_LENGTH, 'Slug může být maximálně %d znaků dlouhý.', 100)
+            ->addRule(Form::Pattern, 'Slug může obsahovat pouze malá písmena, čísla a pomlčky.', '[a-z0-9-]+')
+            ->addRule(Form::MaxLength, 'Slug může být maximálně %d znaků dlouhý.', 100)
             ->setOption('description', 'Ponechte prázdné pro automatické vygenerování.');
             
         $form->addTextArea('description', 'Popis:')
@@ -72,7 +72,7 @@ class AddonForm
             
         $form->addText('version', 'Verze:')
             ->setRequired('Prosím zadejte verzi doplňku.')
-            ->addRule(Form::MAX_LENGTH, 'Verze může být maximálně %d znaků dlouhá.', 20);
+            ->addRule(Form::MaxLength, 'Verze může být maximálně %d znaků dlouhá.', 20);
             
         // URLs
         $form->addText('repository_url', 'URL repozitáře:')
@@ -87,11 +87,11 @@ class AddonForm
         // Kompatibilita verzí
         $form->addText('kodi_version_min', 'Minimální verze Kodi:')
             ->setRequired(false)
-            ->addRule(Form::PATTERN, 'Verze musí být ve formátu X.Y.Z', '\d+(\.\d+)*');
+            ->addRule(Form::Pattern, 'Verze musí být ve formátu X.Y.Z', '\d+(\.\d+)*');
             
         $form->addText('kodi_version_max', 'Maximální verze Kodi:')
             ->setRequired(false)
-            ->addRule(Form::PATTERN, 'Verze musí být ve formátu X.Y.Z', '\d+(\.\d+)*');
+            ->addRule(Form::Pattern, 'Verze musí být ve formátu X.Y.Z', '\d+(\.\d+)*');
             
         // Vztahy
         $categories = $this->categoryService->findAll();
@@ -130,18 +130,18 @@ class AddonForm
         // Multimediální soubory
         $form->addUpload('icon', 'Ikona:')
             ->setRequired(false)
-            ->addRule(Form::IMAGE, 'Ikona musí být obrázek ve formátu JPEG, PNG nebo GIF.')
+            ->addRule(Form::Image, 'Ikona musí být obrázek ve formátu JPEG, PNG nebo GIF.')
             ->setOption('description', 'Doporučená velikost: 256x256 pixelů.');
             
         $form->addUpload('fanart', 'Fanart:')
             ->setRequired(false)
-            ->addRule(Form::IMAGE, 'Fanart musí být obrázek ve formátu JPEG, PNG nebo GIF.')
+            ->addRule(Form::Image, 'Fanart musí být obrázek ve formátu JPEG, PNG nebo GIF.')
             ->setOption('description', 'Doporučená velikost: 1280x720 pixelů.');
             
         // Screenshoty - vícenásobný upload
         $form->addMultiUpload('screenshots', 'Screenshoty:')
             ->setRequired(false)
-            ->addRule(Form::IMAGE, 'Screenshoty musí být obrázky ve formátu JPEG, PNG nebo GIF.');
+            ->addRule(Form::Image, 'Screenshoty musí být obrázky ve formátu JPEG, PNG nebo GIF.');
             
         // ID pro režim úpravy
         if ($addon) {

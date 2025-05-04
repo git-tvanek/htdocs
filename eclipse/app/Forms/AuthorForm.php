@@ -29,11 +29,11 @@ class AuthorForm
         // Základní informace
         $form->addText('name', 'Jméno autora:')
             ->setRequired('Prosím zadejte jméno autora.')
-            ->addRule(Form::MAX_LENGTH, 'Jméno může být maximálně %d znaků dlouhé.', 100);
+            ->addRule(Form::MaxLength, 'Jméno může být maximálně %d znaků dlouhé.', 100);
             
         $form->addEmail('email', 'E-mail:')
             ->setRequired(false)
-            ->addRule(Form::EMAIL, 'Prosím zadejte platnou e-mailovou adresu.');
+            ->addRule(Form::Email, 'Prosím zadejte platnou e-mailovou adresu.');
             
         $form->addText('website', 'Webová stránka:')
             ->setRequired(false)

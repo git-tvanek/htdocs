@@ -55,7 +55,7 @@ class ReviewForm
                 
             $form->addEmail('email', 'Váš e-mail:')
                 ->setRequired(false)
-                ->addRule(Form::EMAIL, 'Prosím zadejte platnou e-mailovou adresu.');
+                ->addRule(Form::Email, 'Prosím zadejte platnou e-mailovou adresu.');
         } else {
             // Přidat ID uživatele pro přihlášené uživatele
             $form->addHidden('user_id', (string)$this->userId);
