@@ -3,11 +3,16 @@ services:
 	- App\Core\RouterFactory::createRouter
 
 	# Repositories
-	- App\Repository\AddonRepository
-	- App\Repository\AuthorRepository
-	- App\Repository\CategoryRepository
-	- App\Repository\ReviewRepository(@addonRepository, @database.default.explorer)
-	- App\Repository\TagRepository
+	- implement: App\Repository\Interface\IAddonRepository
+	  factory: App\Repository\AddonRepository
+	- implement: App\Repository\Interface\IAuthorRepository
+	  factory: App\Repository\AuthorRepository
+	- implement: App\Repository\Interface\ICategoryRepository
+	  factory: App\Repository\CategoryRepository
+	- implement: App\Repository\Interface\IReviewRepository
+	  factory: App\Repository\ReviewRepository
+	- implement: App\Repository\Interface\ITagRepository
+	  factory: App\Repository\TagRepository
 
 	# Factories
 	- App\Factory\AddonFactory
@@ -18,49 +23,29 @@ services:
 	- App\Factory\ScreenshotFactory
 	- App\Factory\TagFactory
 
+	# Form Factories
+	- App\Forms\Factory\AddonFormFactory
+	- App\Forms\Factory\AuthorFormFactory
+	- App\Forms\Factory\CategoryFormFactory
+	- App\Forms\Factory\ReviewFormFactory
+	- App\Forms\Factory\SearchFormFactory
+	- App\Forms\Factory\TagFormFactory
+
 	# Services
-	addonService:
-		factory: App\Service\AddonService(
-			@App\Repository\AddonRepository, 
-			@App\Factory\AddonFactory, 
-			@App\Factory\ScreenshotFactory, 
-			%uploadsDir%
-		)
-	authorService:
-		factory: App\Service\AuthorService(
-			@App\Repository\AuthorRepository, 
-			@App\Factory\AuthorFactory
-		)
-	categoryService:
-		factory: App\Service\CategoryService(
-			@App\Repository\CategoryRepository, 
-			@App\Factory\CategoryFactory
-		)
-	reviewService:
-		factory: App\Service\ReviewService(
-			@App\Repository\ReviewRepository, 
-			@App\Factory\ReviewFactory
-		)
-	tagService:
-		factory: App\Service\TagService(
-			@App\Repository\TagRepository, 
-			@App\Factory\TagFactory
-		)
-	statisticsService:
-		factory: App\Service\StatisticsService(
-			@App\Repository\AddonRepository, 
-			@App\Repository\AuthorRepository, 
-			@App\Repository\CategoryRepository, 
-			@App\Repository\ReviewRepository, 
-			@database.default.explorer
-		)
-	searchService:
-		factory: App\Service\SearchService(
-			@App\Repository\AddonRepository, 
-			@App\Repository\AuthorRepository, 
-			@App\Repository\TagRepository,
-			@App\Repository\CategoryRepository
-		)
+	- implement: App\Service\IAddonService
+	  factory: App\Service\AddonService(%uploadsDir%)
+	- implement: App\Service\IAuthorService
+	  factory: App\Service\AuthorService
+	- implement: App\Service\ICategoryService
+	  factory: App\Service\CategoryService
+	- implement: App\Service\IReviewService
+	  factory: App\Service\ReviewService
+	- implement: App\Service\ISearchService
+	  factory: App\Service\SearchService
+	- implement: App\Service\IStatisticsService
+	  factory: App\Service\StatisticsService
+	- implement: App\Service\ITagService
+	  factory: App\Service\TagService
 
 	# Facades
 	- App\Facade\AddonFacade
