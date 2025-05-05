@@ -59,7 +59,7 @@ final class Template_08f7f5c096 extends Latte\Runtime\Template
             <a class="navbar-brand" href="';
 		echo LR\Filters::escapeHtmlAttr($this->global->uiControl->link('Home:')) /* line 23 */;
 		echo '">
-                <i class="fas fa-puzzle-piece me-2"></i>Kodi Addons
+                <i class="fas fa-puzzle-piece me-2"></i>xAddons
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
@@ -75,7 +75,7 @@ final class Template_08f7f5c096 extends Latte\Runtime\Template
 		echo '" href="';
 		echo LR\Filters::escapeHtmlAttr($this->global->uiControl->link('Addon:')) /* line 33 */;
 		echo '">
-                            <i class="fas fa-cube me-1"></i> Addons
+                            <i class="fas fa-cube me-1"></i> Doplňky
                         </a>
                     </li>
                     <li class="nav-item">
@@ -190,7 +190,7 @@ final class Template_08f7f5c096 extends Latte\Runtime\Template
             <div class="text-center">
                 <p class="mb-0">&copy; ';
 		echo LR\Filters::escapeHtmlText(date('Y')) /* line 106 */;
-		echo ' Kodi Addons Repository. Všechna práva vyhrazena.</p>
+		echo ' xAddons.cz. Všechna práva vyhrazena.</p>
             </div>
         </div>
     </footer>

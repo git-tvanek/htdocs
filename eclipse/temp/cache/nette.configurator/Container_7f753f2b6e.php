@@ -956,7 +956,7 @@ class Container_7f753f2b6e extends Nette\DI\Container
 
 	public function createServiceReviewRepository(): App\Repository\ReviewRepository
 	{
-		return new App\Repository\ReviewRepository($this->getService('addonRepository'), $this->getService('addonRepository'));
+		return new App\Repository\ReviewRepository($this->getService('database.default'), $this->getService('addonRepository'));
 	}
 
 
