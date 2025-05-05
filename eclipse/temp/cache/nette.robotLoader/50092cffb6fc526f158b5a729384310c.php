@@ -710,17 +710,18 @@ return array (
   ),
   1 => 
   array (
-    'Nette\\Bridges\\Assets\\DIExtension' => 1,
-    'null' => 1,
+    'Nette\\Bridges\\Assets\\DIExtension' => 2,
+    'null' => 2,
     'App\\Presentation\\Home\\HomeDefaultTemplate' => 3,
     'App\\Presentation\\Home\\HomeTemplate' => 3,
     'App\\Presentation\\Category\\CategoryDefaultTemplate' => 3,
     'App\\Presentation\\Category\\CategoryTemplate' => 3,
     'App\\Presentation\\Category\\CategoryAddTemplate' => 3,
-    'App\\Presentation\\Author\\AuthorDefaultTemplate' => 1,
-    'App\\Presentation\\Author\\AuthorTemplate' => 1,
+    'App\\Presentation\\Author\\AuthorDefaultTemplate' => 2,
+    'App\\Presentation\\Author\\AuthorTemplate' => 3,
     'App\\Presentation\\Tag\\TagDefaultTemplate' => 1,
     'App\\Presentation\\Tag\\TagTemplate' => 1,
+    'App\\Presentation\\Author\\AuthorAddTemplate' => 1,
   ),
   2 => 
   array (

@@ -412,6 +412,11 @@ return array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Forms\\AuthorForm.php',
       1 => 1746386600,
     ),
+    'App\\Forms\\CategoryForm' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Forms\\CategoryForm.php',
+      1 => 1746474068,
+    ),
     'App\\Forms\\Factory\\AddonFormFactory' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Forms\\Factory\\AddonFormFactory.php',

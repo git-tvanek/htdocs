@@ -59,7 +59,7 @@ final class Template_971efe8837 extends Latte\Runtime\Template
 		unset($ʟ_args);
 
 		echo '<div class="jumbotron bg-light p-5 rounded">
-    <h1 class="display-4">Vítejte v Kodi Addons Repository</h1>
+    <h1 class="display-15">xAddons.cz</h1>
     <p class="lead">Objevujte, stahujte a sdílejte nejlepší doplňky pro Kodi media center.</p>
     <hr class="my-4">
     <p>Procházejte naši rozsáhlou sbírku doplňků organizovanou podle kategorií, autorů nebo tagů.</p>
