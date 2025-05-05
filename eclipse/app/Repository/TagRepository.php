@@ -76,6 +76,32 @@ class TagRepository extends BaseRepository implements ITagRepository
     }
 
     /**
+    * Aktualizuje existující tag
+    * 
+    * @param Tag $tag Tag k aktualizaci
+    * @return int ID aktualizovaného tagu
+    */
+    public function update(Tag $tag): int
+    {
+    // Kontrola, že tag existuje
+    if (!$this->exists($tag->id)) {
+        throw new \Exception("Tag s ID {$tag->id} neexistuje.");
+    }
+    
+    // Pokud není slug definován, vytvoříme ho z názvu
+    if (empty($tag->slug)) {
+        $tag->slug = Strings::webalize($tag->name);
+    }
+    
+    // Uložíme aktualizovaný tag do databáze
+    $this->getTable()
+        ->wherePrimary($tag->id)
+        ->update($tag->toArray());
+    
+    return $tag->id;
+    }
+
+    /**
      * Get tags with their addon counts
      * 
      * @return array

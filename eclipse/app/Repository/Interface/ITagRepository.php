@@ -38,6 +38,14 @@ interface ITagRepository extends IBaseRepository
      * @return int
      */
     public function create(Tag $tag): int;
+
+    /**
+    * Aktualizuje existující tag
+    * 
+    * @param Tag $tag Tag k aktualizaci
+    * @return int ID aktualizovaného tagu
+    */
+    public function update(Tag $tag): int;
     
     /**
      * Získá tagy s počty doplňků

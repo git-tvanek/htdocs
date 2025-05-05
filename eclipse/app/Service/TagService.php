@@ -61,6 +61,37 @@ class TagService extends BaseService implements ITagService
         $tag = $this->tagFactory->create($data);
         return $this->tagRepository->create($tag);
     }
+
+    /**
+     * Aktualizuje existující tag
+    * 
+    * @param int $id ID tagu
+     * @param array $data Data pro aktualizaci
+     * @return int ID aktualizovaného tagu
+     */
+    public function update(int $id, array $data): int
+    {
+    // Získání existujícího tagu
+    $tag = $this->findById($id);
+    if (!$tag) {
+        throw new \Exception("Tag s ID {$id} nebyl nalezen.");
+    }
+    
+    // Aktualizace vlastností tagu
+    if (isset($data['name'])) {
+        $tag->name = $data['name'];
+    }
+    
+    if (isset($data['slug'])) {
+        $tag->slug = $data['slug'];
+    } else if (isset($data['name'])) {
+        // Automatické vytvoření slugu, pokud byl změněn název
+        $tag->slug = \Nette\Utils\Strings::webalize($data['name']);
+    }
+    
+    // Použití TagRepository pro aktualizaci
+    return $this->tagRepository->update($tag);
+    }
     
     /**
      * Vytvoří tag pouze s názvem

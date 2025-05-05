@@ -151,6 +151,18 @@ class TagFacade implements IFacade
     {
         return $this->tagService->findTagsByCategories($categoryIds, $limit);
     }
+
+    /**
+    * Aktualizuje existující tag
+    * 
+    * @param int $id ID tagu
+    * @param array $data Data pro aktualizaci
+    * @return int ID aktualizovaného tagu
+    */
+    public function updateTag(int $id, array $data): int
+    {
+    return $this->tagService->update($id, $data);
+    }
     
     /**
      * Smaže tag

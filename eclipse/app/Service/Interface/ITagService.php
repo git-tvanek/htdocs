@@ -22,6 +22,15 @@ interface ITagService extends IBaseService
      * @return int ID vytvořeného tagu
      */
     public function create(array $data): int;
+
+    /**
+    * Aktualizuje existující tag
+    * 
+    * @param int $id ID tagu
+    * @param array $data Data pro aktualizaci
+    * @return int ID aktualizovaného tagu
+    */
+    public function update(int $id, array $data): int;
     
     /**
      * Vytvoří tag pouze s názvem
