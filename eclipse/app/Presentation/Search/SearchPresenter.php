@@ -91,21 +91,21 @@ class SearchPresenter extends BasePresenter
      */
     protected function createComponentSearchForm(): Form
     {
-        $form = $this->searchFormFactory->create();
+        $searchForm = $this->searchFormFactory->create();
         
         // Get filter values from the request
         $defaults = $this->getFiltersFromRequest();
         $defaults['query'] = $this->getParameter('query', '');
         
-        // Set form defaults
-        $form->setDefaults($defaults);
+        // Zde vytvoříme formulář s výchozími hodnotami
+        $form = $searchForm->create($defaults);
         
         // Set callback for form processing
         $form->onSuccess[] = function (array $data) {
             $this->processSearchForm($data);
         };
         
-        return $form->create();
+        return $form;
     }
     
     /**

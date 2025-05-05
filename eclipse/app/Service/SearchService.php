@@ -163,24 +163,23 @@ class SearchService implements ISearchService
     }
     
     /**
-     * Získá možnosti kategorií pro filtry
-     * 
-     * @return array
-     */
+    * Získá možnosti kategorií pro filtry
+    * 
+    * @return array
+    */
     private function getCategoryOptions(): array
     {
-        $categories = [];
-        $rows = $this->addonRepository->getRepository()->getDatabase()->table('categories')
-            ->order('name ASC');
-        
-        foreach ($rows as $row) {
-            $categories[] = [
-                'id' => $row->id,
-                'name' => $row->name
-            ];
-        }
-        
-        return $categories;
+    $categories = [];
+    $rows = $this->categoryRepository->findAll()->order('name ASC');
+    
+    foreach ($rows as $row) {
+        $categories[] = [
+            'id' => $row->id,
+            'name' => $row->name
+        ];
+    }
+    
+    return $categories;
     }
     
     /**
