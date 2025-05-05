@@ -60,38 +60,128 @@ class Container_7f753f2b6e extends Nette\DI\Container
 		'Tracy\Bar' => [['tracy.bar']],
 		'Nette\Routing\RouteList' => [['01']],
 		'Nette\Routing\Router' => [['01']],
-		'ArrayAccess' => [2 => ['01', 'application.1', 'application.3']],
+		'ArrayAccess' => [2 => ['01', 'application.1', 'application.2', 'application.4']],
 		'Nette\Application\Routers\RouteList' => [['01']],
-		'Nette\Application\UI\Presenter' => [2 => ['application.1', 'application.3']],
-		'Nette\Application\UI\Control' => [2 => ['application.1', 'application.3']],
-		'Nette\Application\UI\Component' => [2 => ['application.1', 'application.3']],
-		'Nette\ComponentModel\Container' => [2 => ['application.1', 'application.3']],
-		'Nette\ComponentModel\Component' => [2 => ['application.1', 'application.3']],
-		'Nette\Application\IPresenter' => [
-			2 => ['application.1', 'application.2', 'application.3', 'application.4', 'application.5'],
+		'App\Repository\BaseRepository' => [
+			['addonRepository', 'authorRepository', 'categoryRepository', 'reviewRepository', 'tagRepository'],
 		],
-		'Nette\Application\UI\Renderable' => [2 => ['application.1', 'application.3']],
-		'Nette\Application\UI\StatePersistent' => [2 => ['application.1', 'application.3']],
-		'Nette\Application\UI\SignalReceiver' => [2 => ['application.1', 'application.3']],
-		'Nette\ComponentModel\IContainer' => [2 => ['application.1', 'application.3']],
-		'Nette\ComponentModel\IComponent' => [2 => ['application.1', 'application.3']],
-		'App\Presentation\Error\Error4xx\Error4xxPresenter' => [2 => ['application.1']],
-		'App\Presentation\Error\Error5xx\Error5xxPresenter' => [2 => ['application.2']],
-		'App\Presentation\Home\HomePresenter' => [2 => ['application.3']],
-		'NetteModule\ErrorPresenter' => [2 => ['application.4']],
-		'NetteModule\MicroPresenter' => [2 => ['application.5']],
-		'App\Repository\BaseRepository' => [['02', '03', '04', '05', '06']],
-		'App\Repository\Interface\BaseRepositoryInterface' => [['02', '03', '04', '05', '06']],
-		'App\Repository\Interface\AddonRepositoryInterface' => [['02']],
-		'App\Repository\AddonRepository' => [['02']],
-		'App\Repository\Interface\AuthorRepositoryInterface' => [['03']],
-		'App\Repository\AuthorRepository' => [['03']],
-		'App\Repository\Interface\CategoryRepositoryInterface' => [['04']],
-		'App\Repository\CategoryRepository' => [['04']],
-		'App\Repository\Interface\ReviewRepositoryInterface' => [['05']],
-		'App\Repository\ReviewRepository' => [['05']],
-		'App\Repository\Interface\TagRepositoryInterface' => [['06']],
-		'App\Repository\TagRepository' => [['06']],
+		'App\Repository\Interface\IBaseRepository' => [
+			0 => ['addonRepository', 'authorRepository', 'categoryRepository', 'reviewRepository', 'tagRepository'],
+			2 => [
+				5 => 'addonRepositoryAlias',
+				'authorRepositoryAlias',
+				'categoryRepositoryAlias',
+				'reviewRepositoryAlias',
+				'tagRepositoryAlias',
+			],
+		],
+		'App\Repository\Interface\IAddonRepository' => [0 => ['addonRepository'], 2 => [1 => 'addonRepositoryAlias']],
+		'App\Repository\AddonRepository' => [['addonRepository']],
+		'App\Repository\Interface\IAuthorRepository' => [0 => ['authorRepository'], 2 => [1 => 'authorRepositoryAlias']],
+		'App\Repository\AuthorRepository' => [['authorRepository']],
+		'App\Repository\Interface\ICategoryRepository' => [
+			0 => ['categoryRepository'],
+			2 => [1 => 'categoryRepositoryAlias'],
+		],
+		'App\Repository\CategoryRepository' => [['categoryRepository']],
+		'App\Repository\Interface\IReviewRepository' => [0 => ['reviewRepository'], 2 => [1 => 'reviewRepositoryAlias']],
+		'App\Repository\ReviewRepository' => [['reviewRepository']],
+		'App\Repository\Interface\ITagRepository' => [0 => ['tagRepository'], 2 => [1 => 'tagRepositoryAlias']],
+		'App\Repository\TagRepository' => [['tagRepository']],
+		'App\Factory\Interface\IAddonFactory' => [0 => ['addonFactory'], 2 => [1 => 'addonFactoryAlias']],
+		'App\Factory\Interface\IFactory' => [
+			0 => [
+				'addonFactory',
+				'addonTagFactory',
+				'authorFactory',
+				'categoryFactory',
+				'reviewFactory',
+				'screenshotFactory',
+				'tagFactory',
+			],
+			2 => [
+				7 => 'addonFactoryAlias',
+				'addonTagFactoryAlias',
+				'authorFactoryAlias',
+				'categoryFactoryAlias',
+				'reviewFactoryAlias',
+				'screenshotFactoryAlias',
+				'tagFactoryAlias',
+			],
+		],
+		'App\Factory\AddonFactory' => [['addonFactory']],
+		'App\Factory\Interface\IAddonTagFactory' => [0 => ['addonTagFactory'], 2 => [1 => 'addonTagFactoryAlias']],
+		'App\Factory\AddonTagFactory' => [['addonTagFactory']],
+		'App\Factory\Interface\IAuthorFactory' => [0 => ['authorFactory'], 2 => [1 => 'authorFactoryAlias']],
+		'App\Factory\AuthorFactory' => [['authorFactory']],
+		'App\Factory\Interface\ICategoryFactory' => [0 => ['categoryFactory'], 2 => [1 => 'categoryFactoryAlias']],
+		'App\Factory\CategoryFactory' => [['categoryFactory']],
+		'App\Factory\Interface\IReviewFactory' => [0 => ['reviewFactory'], 2 => [1 => 'reviewFactoryAlias']],
+		'App\Factory\ReviewFactory' => [['reviewFactory']],
+		'App\Factory\Interface\IScreenshotFactory' => [0 => ['screenshotFactory'], 2 => [1 => 'screenshotFactoryAlias']],
+		'App\Factory\ScreenshotFactory' => [['screenshotFactory']],
+		'App\Factory\Interface\ITagFactory' => [0 => ['tagFactory'], 2 => [1 => 'tagFactoryAlias']],
+		'App\Factory\TagFactory' => [['tagFactory']],
+		'App\Forms\Factory\AddonFormFactory' => [['02']],
+		'App\Forms\Factory\AuthorFormFactory' => [['03']],
+		'App\Forms\Factory\CategoryFormFactory' => [['04']],
+		'App\Forms\Factory\ReviewFormFactory' => [['05']],
+		'App\Forms\Factory\SearchFormFactory' => [['06']],
+		'App\Forms\Factory\TagFormFactory' => [['07']],
+		'App\Service\BaseService' => [['addonService', 'authorService', 'categoryService', 'reviewService', 'tagService']],
+		'App\Service\IBaseService' => [
+			0 => ['addonService', 'authorService', 'categoryService', 'reviewService', 'tagService'],
+			2 => [
+				5 => 'addonServiceAlias',
+				'authorServiceAlias',
+				'categoryServiceAlias',
+				'reviewServiceAlias',
+				'tagServiceAlias',
+			],
+		],
+		'App\Service\IAddonService' => [0 => ['addonService'], 2 => [1 => 'addonServiceAlias']],
+		'App\Service\AddonService' => [['addonService']],
+		'App\Service\IAuthorService' => [0 => ['authorService'], 2 => [1 => 'authorServiceAlias']],
+		'App\Service\AuthorService' => [['authorService']],
+		'App\Service\ICategoryService' => [0 => ['categoryService'], 2 => [1 => 'categoryServiceAlias']],
+		'App\Service\CategoryService' => [['categoryService']],
+		'App\Service\IReviewService' => [0 => ['reviewService'], 2 => [1 => 'reviewServiceAlias']],
+		'App\Service\ReviewService' => [['reviewService']],
+		'App\Service\ISearchService' => [0 => ['searchService'], 2 => [1 => 'searchServiceAlias']],
+		'App\Service\SearchService' => [['searchService']],
+		'App\Service\IStatisticsService' => [0 => ['statisticsService'], 2 => [1 => 'statisticsServiceAlias']],
+		'App\Service\StatisticsService' => [['statisticsService']],
+		'App\Service\ITagService' => [0 => ['tagService'], 2 => [1 => 'tagServiceAlias']],
+		'App\Service\TagService' => [['tagService']],
+		'App\Facade\IFacade' => [['08', '09', '010', '011', '012', '013', '014']],
+		'App\Facade\AddonFacade' => [['08']],
+		'App\Facade\AuthorFacade' => [['09']],
+		'App\Facade\CategoryFacade' => [['010']],
+		'App\Facade\ReviewFacade' => [['011']],
+		'App\Facade\SearchFacade' => [['012']],
+		'App\Facade\StatisticsFacade' => [['013']],
+		'App\Facade\TagFacade' => [['014']],
+		'App\Presentation\BasePresenter' => [2 => ['application.1']],
+		'Nette\Application\UI\Presenter' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\Application\UI\Control' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\Application\UI\Component' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\ComponentModel\Container' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\ComponentModel\Component' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\ComponentModel\IComponent' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\ComponentModel\IContainer' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\Application\UI\SignalReceiver' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\Application\UI\StatePersistent' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\Application\UI\Renderable' => [2 => ['application.1', 'application.2', 'application.4']],
+		'Nette\Application\IPresenter' => [
+			2 => ['application.1', 'application.2', 'application.3', 'application.4', 'application.5', 'application.6'],
+		],
+		'App\Presentation\Addon\AddonPresenter' => [2 => ['application.1']],
+		'App\Presentation\Error\Error4xx\Error4xxPresenter' => [2 => ['application.2']],
+		'App\Presentation\Error\Error5xx\Error5xxPresenter' => [2 => ['application.3']],
+		'App\Presentation\Home\HomePresenter' => [2 => ['application.4']],
+		'NetteModule\ErrorPresenter' => [2 => ['application.5']],
+		'NetteModule\MicroPresenter' => [2 => ['application.6']],
+		'App\Dto\Factory\DtoFactory' => [['015']],
 	];
 
 
@@ -107,37 +197,178 @@ class Container_7f753f2b6e extends Nette\DI\Container
 	}
 
 
-	public function createService02(): App\Repository\AddonRepository
+	public function createService02(): App\Forms\Factory\AddonFormFactory
+	{
+		return new App\Forms\Factory\AddonFormFactory(
+			$this->getService('categoryService'),
+			$this->getService('authorService'),
+			$this->getService('tagService'),
+		);
+	}
+
+
+	public function createService03(): App\Forms\Factory\AuthorFormFactory
+	{
+		return new App\Forms\Factory\AuthorFormFactory;
+	}
+
+
+	public function createService04(): App\Forms\Factory\CategoryFormFactory
+	{
+		return new App\Forms\Factory\CategoryFormFactory($this->getService('categoryService'));
+	}
+
+
+	public function createService05(): App\Forms\Factory\ReviewFormFactory
+	{
+		return new App\Forms\Factory\ReviewFormFactory;
+	}
+
+
+	public function createService06(): App\Forms\Factory\SearchFormFactory
+	{
+		return new App\Forms\Factory\SearchFormFactory($this->getService('categoryService'), $this->getService('tagService'));
+	}
+
+
+	public function createService07(): App\Forms\Factory\TagFormFactory
+	{
+		return new App\Forms\Factory\TagFormFactory;
+	}
+
+
+	public function createService08(): App\Facade\AddonFacade
+	{
+		return new App\Facade\AddonFacade(
+			$this->getService('addonService'),
+			$this->getService('categoryService'),
+			$this->getService('tagService'),
+			$this->getService('authorService'),
+		);
+	}
+
+
+	public function createService09(): App\Facade\AuthorFacade
+	{
+		return new App\Facade\AuthorFacade($this->getService('authorService'));
+	}
+
+
+	public function createService010(): App\Facade\CategoryFacade
+	{
+		return new App\Facade\CategoryFacade($this->getService('categoryService'));
+	}
+
+
+	public function createService011(): App\Facade\ReviewFacade
+	{
+		return new App\Facade\ReviewFacade($this->getService('reviewService'));
+	}
+
+
+	public function createService012(): App\Facade\SearchFacade
+	{
+		return new App\Facade\SearchFacade($this->getService('searchService'));
+	}
+
+
+	public function createService013(): App\Facade\StatisticsFacade
+	{
+		return new App\Facade\StatisticsFacade($this->getService('statisticsService'));
+	}
+
+
+	public function createService014(): App\Facade\TagFacade
+	{
+		return new App\Facade\TagFacade($this->getService('tagService'));
+	}
+
+
+	public function createService015(): App\Dto\Factory\DtoFactory
+	{
+		return new App\Dto\Factory\DtoFactory;
+	}
+
+
+	public function createServiceAddonFactory(): App\Factory\AddonFactory
+	{
+		return new App\Factory\AddonFactory;
+	}
+
+
+	public function createServiceAddonFactoryAlias(): App\Factory\Interface\IAddonFactory
+	{
+		return $this->getService('addonFactory');
+	}
+
+
+	public function createServiceAddonRepository(): App\Repository\AddonRepository
 	{
 		return new App\Repository\AddonRepository($this->getService('database.default.explorer'));
 	}
 
 
-	public function createService03(): App\Repository\AuthorRepository
+	public function createServiceAddonRepositoryAlias(): App\Repository\Interface\IAddonRepository
 	{
-		return new App\Repository\AuthorRepository($this->getService('database.default.explorer'));
+		return $this->getService('addonRepository');
 	}
 
 
-	public function createService04(): App\Repository\CategoryRepository
+	public function createServiceAddonService(): App\Service\AddonService
 	{
-		return new App\Repository\CategoryRepository($this->getService('database.default.explorer'));
+		return new App\Service\AddonService(
+			$this->getService('addonRepository'),
+			$this->getService('addonFactory'),
+			$this->getService('screenshotFactory'),
+			'C:\xampp\htdocs\eclipse\app/../www/uploads',
+		);
 	}
 
 
-	public function createService05(): App\Repository\ReviewRepository
+	public function createServiceAddonServiceAlias(): App\Service\IAddonService
 	{
-		return new App\Repository\ReviewRepository($this->getService('database.default.explorer'), $this->getService('02'));
+		return $this->getService('addonService');
 	}
 
 
-	public function createService06(): App\Repository\TagRepository
+	public function createServiceAddonTagFactory(): App\Factory\AddonTagFactory
 	{
-		return new App\Repository\TagRepository($this->getService('database.default.explorer'));
+		return new App\Factory\AddonTagFactory;
 	}
 
 
-	public function createServiceApplication__1(): App\Presentation\Error\Error4xx\Error4xxPresenter
+	public function createServiceAddonTagFactoryAlias(): App\Factory\Interface\IAddonTagFactory
+	{
+		return $this->getService('addonTagFactory');
+	}
+
+
+	public function createServiceApplication__1(): App\Presentation\Addon\AddonPresenter
+	{
+		$service = new App\Presentation\Addon\AddonPresenter(
+			$this->getService('08'),
+			$this->getService('010'),
+			$this->getService('09'),
+			$this->getService('014'),
+			$this->getService('011'),
+			$this->getService('02'),
+			$this->getService('05'),
+		);
+		$service->injectPrimary(
+			$this->getService('http.request'),
+			$this->getService('http.response'),
+			$this->getService('application.presenterFactory'),
+			$this->getService('01'),
+			$this->getService('session.session'),
+			$this->getService('security.user'),
+			$this->getService('latte.templateFactory'),
+		);
+		$service->invalidLinkMode = 5;
+		return $service;
+	}
+
+
+	public function createServiceApplication__2(): App\Presentation\Error\Error4xx\Error4xxPresenter
 	{
 		$service = new App\Presentation\Error\Error4xx\Error4xxPresenter;
 		$service->injectPrimary(
@@ -154,13 +385,13 @@ class Container_7f753f2b6e extends Nette\DI\Container
 	}
 
 
-	public function createServiceApplication__2(): App\Presentation\Error\Error5xx\Error5xxPresenter
+	public function createServiceApplication__3(): App\Presentation\Error\Error5xx\Error5xxPresenter
 	{
 		return new App\Presentation\Error\Error5xx\Error5xxPresenter($this->getService('tracy.logger'));
 	}
 
 
-	public function createServiceApplication__3(): App\Presentation\Home\HomePresenter
+	public function createServiceApplication__4(): App\Presentation\Home\HomePresenter
 	{
 		$service = new App\Presentation\Home\HomePresenter;
 		$service->injectPrimary(
@@ -177,13 +408,13 @@ class Container_7f753f2b6e extends Nette\DI\Container
 	}
 
 
-	public function createServiceApplication__4(): NetteModule\ErrorPresenter
+	public function createServiceApplication__5(): NetteModule\ErrorPresenter
 	{
 		return new NetteModule\ErrorPresenter($this->getService('tracy.logger'));
 	}
 
 
-	public function createServiceApplication__5(): NetteModule\MicroPresenter
+	public function createServiceApplication__6(): NetteModule\MicroPresenter
 	{
 		return new NetteModule\MicroPresenter($this, $this->getService('http.request'), $this->getService('01'));
 	}
@@ -232,6 +463,42 @@ class Container_7f753f2b6e extends Nette\DI\Container
 	}
 
 
+	public function createServiceAuthorFactory(): App\Factory\AuthorFactory
+	{
+		return new App\Factory\AuthorFactory;
+	}
+
+
+	public function createServiceAuthorFactoryAlias(): App\Factory\Interface\IAuthorFactory
+	{
+		return $this->getService('authorFactory');
+	}
+
+
+	public function createServiceAuthorRepository(): App\Repository\AuthorRepository
+	{
+		return new App\Repository\AuthorRepository($this->getService('database.default.explorer'));
+	}
+
+
+	public function createServiceAuthorRepositoryAlias(): App\Repository\Interface\IAuthorRepository
+	{
+		return $this->getService('authorRepository');
+	}
+
+
+	public function createServiceAuthorService(): App\Service\AuthorService
+	{
+		return new App\Service\AuthorService($this->getService('authorRepository'), $this->getService('authorFactory'));
+	}
+
+
+	public function createServiceAuthorServiceAlias(): App\Service\IAuthorService
+	{
+		return $this->getService('authorService');
+	}
+
+
 	public function createServiceCache__journal(): Nette\Caching\Storages\Journal
 	{
 		return new Nette\Caching\Storages\SQLiteJournal('C:\xampp\htdocs\eclipse/temp/cache/journal.s3db');
@@ -244,6 +511,42 @@ class Container_7f753f2b6e extends Nette\DI\Container
 	}
 
 
+	public function createServiceCategoryFactory(): App\Factory\CategoryFactory
+	{
+		return new App\Factory\CategoryFactory;
+	}
+
+
+	public function createServiceCategoryFactoryAlias(): App\Factory\Interface\ICategoryFactory
+	{
+		return $this->getService('categoryFactory');
+	}
+
+
+	public function createServiceCategoryRepository(): App\Repository\CategoryRepository
+	{
+		return new App\Repository\CategoryRepository($this->getService('database.default.explorer'));
+	}
+
+
+	public function createServiceCategoryRepositoryAlias(): App\Repository\Interface\ICategoryRepository
+	{
+		return $this->getService('categoryRepository');
+	}
+
+
+	public function createServiceCategoryService(): App\Service\CategoryService
+	{
+		return new App\Service\CategoryService($this->getService('categoryRepository'), $this->getService('categoryFactory'));
+	}
+
+
+	public function createServiceCategoryServiceAlias(): App\Service\ICategoryService
+	{
+		return $this->getService('categoryService');
+	}
+
+
 	public function createServiceContainer(): Nette\DI\Container
 	{
 		return $this;
@@ -252,7 +555,7 @@ class Container_7f753f2b6e extends Nette\DI\Container
 
 	public function createServiceDatabase__default__connection(): Nette\Database\Connection
 	{
-		$service = new Nette\Database\Connection('sqlite::memory:', null, null, []);
+		$service = new Nette\Database\Connection('mysql:host=localhost;dbname=eclipse', /*sensitive{*/'root'/*}*/, null, []);
 		Nette\Bridges\DatabaseTracy\ConnectionPanel::initialize(
 			$service,
 			true,
@@ -358,6 +661,71 @@ class Container_7f753f2b6e extends Nette\DI\Container
 	}
 
 
+	public function createServiceReviewFactory(): App\Factory\ReviewFactory
+	{
+		return new App\Factory\ReviewFactory;
+	}
+
+
+	public function createServiceReviewFactoryAlias(): App\Factory\Interface\IReviewFactory
+	{
+		return $this->getService('reviewFactory');
+	}
+
+
+	public function createServiceReviewRepository(): App\Repository\ReviewRepository
+	{
+		return new App\Repository\ReviewRepository($this->getService('addonRepository'), $this->getService('addonRepository'));
+	}
+
+
+	public function createServiceReviewRepositoryAlias(): App\Repository\Interface\IReviewRepository
+	{
+		return $this->getService('reviewRepository');
+	}
+
+
+	public function createServiceReviewService(): App\Service\ReviewService
+	{
+		return new App\Service\ReviewService($this->getService('reviewRepository'), $this->getService('reviewFactory'));
+	}
+
+
+	public function createServiceReviewServiceAlias(): App\Service\IReviewService
+	{
+		return $this->getService('reviewService');
+	}
+
+
+	public function createServiceScreenshotFactory(): App\Factory\ScreenshotFactory
+	{
+		return new App\Factory\ScreenshotFactory;
+	}
+
+
+	public function createServiceScreenshotFactoryAlias(): App\Factory\Interface\IScreenshotFactory
+	{
+		return $this->getService('screenshotFactory');
+	}
+
+
+	public function createServiceSearchService(): App\Service\SearchService
+	{
+		return new App\Service\SearchService(
+			$this->getService('addonRepository'),
+			$this->getService('authorRepository'),
+			$this->getService('tagRepository'),
+			$this->getService('categoryRepository'),
+		);
+	}
+
+
+	public function createServiceSearchServiceAlias(): App\Service\ISearchService
+	{
+		return $this->getService('searchService');
+	}
+
+
 	public function createServiceSecurity__passwords(): Nette\Security\Passwords
 	{
 		return new Nette\Security\Passwords;
@@ -383,6 +751,60 @@ class Container_7f753f2b6e extends Nette\DI\Container
 		$service = new Nette\Http\Session($this->getService('http.request'), $this->getService('http.response'));
 		$service->setOptions(['cookieSamesite' => 'Lax']);
 		return $service;
+	}
+
+
+	public function createServiceStatisticsService(): App\Service\StatisticsService
+	{
+		return new App\Service\StatisticsService(
+			$this->getService('addonRepository'),
+			$this->getService('authorRepository'),
+			$this->getService('categoryRepository'),
+			$this->getService('reviewRepository'),
+			$this->getService('database.default'),
+		);
+	}
+
+
+	public function createServiceStatisticsServiceAlias(): App\Service\IStatisticsService
+	{
+		return $this->getService('statisticsService');
+	}
+
+
+	public function createServiceTagFactory(): App\Factory\TagFactory
+	{
+		return new App\Factory\TagFactory;
+	}
+
+
+	public function createServiceTagFactoryAlias(): App\Factory\Interface\ITagFactory
+	{
+		return $this->getService('tagFactory');
+	}
+
+
+	public function createServiceTagRepository(): App\Repository\TagRepository
+	{
+		return new App\Repository\TagRepository($this->getService('database.default.explorer'));
+	}
+
+
+	public function createServiceTagRepositoryAlias(): App\Repository\Interface\ITagRepository
+	{
+		return $this->getService('tagRepository');
+	}
+
+
+	public function createServiceTagService(): App\Service\TagService
+	{
+		return new App\Service\TagService($this->getService('tagRepository'), $this->getService('tagFactory'));
+	}
+
+
+	public function createServiceTagServiceAlias(): App\Service\ITagService
+	{
+		return $this->getService('tagService');
 	}
 
 
