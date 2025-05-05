@@ -50,6 +50,9 @@ class CategoryForm
             ->addRule(Form::Pattern, 'Slug může obsahovat pouze malá písmena, čísla a pomlčky.', '[a-z0-9-]+')
             ->addRule(Form::MaxLength, 'Slug může být maximálně %d znaků dlouhý.', 100)
             ->setOption('description', 'Ponechte prázdné pro automatické vygenerování.');
+        $form->addTextArea('description', 'Popis kategorie:')
+            ->setRequired(false)
+            ->addRule(Form::MaxLength, 'Popis může být maximálně %d znaků dlouhý.', 5000);
             
         // Nadřazená kategorie
         $categories = $this->categoryService->findAll();

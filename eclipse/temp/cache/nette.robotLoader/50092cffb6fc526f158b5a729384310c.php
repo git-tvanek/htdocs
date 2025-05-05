@@ -412,6 +412,11 @@ return array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Forms\\AuthorForm.php',
       1 => 1746386600,
     ),
+    'App\\Forms\\CategoryForm' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Forms\\CategoryForm.php',
+      1 => 1746474068,
+    ),
     'App\\Forms\\Factory\\AddonFormFactory' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Forms\\Factory\\AddonFormFactory.php',
@@ -705,22 +710,17 @@ return array (
   ),
   1 => 
   array (
-    'Nette\\Bridges\\Assets\\DIExtension' => 3,
-    'null' => 3,
+    'Nette\\Bridges\\Assets\\DIExtension' => 1,
+    'null' => 1,
     'App\\Presentation\\Home\\HomeDefaultTemplate' => 3,
     'App\\Presentation\\Home\\HomeTemplate' => 3,
     'App\\Presentation\\Category\\CategoryDefaultTemplate' => 3,
     'App\\Presentation\\Category\\CategoryTemplate' => 3,
-    'App\\Presentation\\Author\\AuthorDefaultTemplate' => 3,
-    'App\\Presentation\\Author\\AuthorTemplate' => 3,
-    'App\\Presentation\\Tag\\TagDefaultTemplate' => 3,
-    'App\\Presentation\\Tag\\TagTemplate' => 3,
-    'App\\Presentation\\Search\\SearchAdvancedTemplate' => 3,
-    'App\\Presentation\\Search\\SearchTemplate' => 3,
-    'App\\Presentation\\Author\\AuthorAddTemplate' => 3,
     'App\\Presentation\\Category\\CategoryAddTemplate' => 3,
-    'App\\Presentation\\Search\\SearchDefaultTemplate' => 1,
-    'App\\Presentation\\Tag\\TagTagAddTemplate' => 2,
+    'App\\Presentation\\Author\\AuthorDefaultTemplate' => 1,
+    'App\\Presentation\\Author\\AuthorTemplate' => 1,
+    'App\\Presentation\\Tag\\TagDefaultTemplate' => 1,
+    'App\\Presentation\\Tag\\TagTemplate' => 1,
   ),
   2 => 
   array (
