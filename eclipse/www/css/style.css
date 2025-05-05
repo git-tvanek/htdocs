@@ -1,0 +1,99 @@
+/* Custom styles for Kodi Addons Repository */
+
+/* Hover effect for cards */
+.hover-shadow {
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+/* Custom background for jumbotron */
+.jumbotron {
+    background-image: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+    border-left: 4px solid #3498db;
+}
+
+/* Fix for table responsiveness */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ratings color */
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Footer links hover effect */
+footer a.text-white:hover {
+    color: #f8f9fa !important;
+    text-decoration: underline !important;
+}
+
+/* Badge styling */
+.badge {
+    font-weight: 500;
+}
+
+/* Form controls focus */
+.form-control:focus, .form-select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+/* Pagination active item color */
+.pagination .active .page-link {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+/* Star rating hover effect */
+.star-rating .fa-star:hover {
+    transform: scale(1.2);
+}
+
+/* Tag cloud styling */
+.tag-cloud a {
+    margin: 3px;
+    display: inline-block;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.75rem 0;
+}
+
+/* Small height adjustment for card footers */
+.card-footer {
+    padding: 0.75rem 1.25rem;
+}
+
+/* Image handling in cards */
+.card-img-top img {
+    object-fit: contain;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #217dbb;
+}

@@ -325,7 +325,7 @@ return array (
     'App\\Facade\\TagFacade' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Facade\\TagFacade.php',
-      1 => 1746381001,
+      1 => 1746468652,
     ),
     'App\\Factory\\AddonFactory' => 
     array (
@@ -502,10 +502,25 @@ return array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Addon\\AddonPresenter.php',
       1 => 1746388588,
     ),
+    'App\\Presentation\\Author\\AuthorPresenter' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Author\\AuthorPresenter.php',
+      1 => 1746467218,
+    ),
     'App\\Presentation\\BasePresenter' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\BasePresenter.php',
       1 => 1746388682,
+    ),
+    'App\\Presentation\\Category\\CategoryPresenter' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Category\\CategoryPresenter.php',
+      1 => 1746468665,
+    ),
+    'App\\Presentation\\Dashboard\\DashboardPresenter' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Dashboard\\DashboardPresenter.php',
+      1 => 1746467366,
     ),
     'App\\Presentation\\Error\\Error4xx\\Error4xxPresenter' => 
     array (
@@ -521,6 +536,21 @@ return array (
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Home\\HomePresenter.php',
       1 => 1738539948,
+    ),
+    'App\\Presentation\\Review\\ReviewPresenter' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Review\\ReviewPresenter.php',
+      1 => 1746467246,
+    ),
+    'App\\Presentation\\Search\\SearchPresenter' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Search\\SearchPresenter.php',
+      1 => 1746467314,
+    ),
+    'App\\Presentation\\Tag\\TagPresenter' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Presentation\\Tag\\TagPresenter.php',
+      1 => 1746467230,
     ),
     'App\\Repository\\AddonRepository' => 
     array (
@@ -570,7 +600,7 @@ return array (
     'App\\Repository\\Interface\\ITagRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\Interface\\ITagRepository.php',
-      1 => 1746386196,
+      1 => 1746468547,
     ),
     'App\\Repository\\Query\\AddonAdvancedSearchQuery' => 
     array (
@@ -590,7 +620,7 @@ return array (
     'App\\Repository\\TagRepository' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Repository\\TagRepository.php',
-      1 => 1746386141,
+      1 => 1746468573,
     ),
     'App\\Service\\AddonService' => 
     array (
@@ -650,7 +680,7 @@ return array (
     'App\\Service\\ITagService' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Service\\Interface\\ITagService.php',
-      1 => 1746386106,
+      1 => 1746468452,
     ),
     'App\\Service\\ReviewService' => 
     array (
@@ -670,7 +700,7 @@ return array (
     'App\\Service\\TagService' => 
     array (
       0 => 'C:\\xampp\\htdocs\\eclipse\\app\\Service\\TagService.php',
-      1 => 1746386163,
+      1 => 1746468608,
     ),
   ),
   1 => 
@@ -679,6 +709,17 @@ return array (
     'null' => 3,
     'App\\Presentation\\Home\\HomeDefaultTemplate' => 3,
     'App\\Presentation\\Home\\HomeTemplate' => 3,
+    'App\\Presentation\\Category\\CategoryDefaultTemplate' => 3,
+    'App\\Presentation\\Category\\CategoryTemplate' => 3,
+    'App\\Presentation\\Author\\AuthorDefaultTemplate' => 2,
+    'App\\Presentation\\Author\\AuthorTemplate' => 3,
+    'App\\Presentation\\Tag\\TagDefaultTemplate' => 3,
+    'App\\Presentation\\Tag\\TagTemplate' => 3,
+    'App\\Presentation\\Search\\SearchAdvancedTemplate' => 2,
+    'App\\Presentation\\Search\\SearchTemplate' => 3,
+    'App\\Presentation\\Author\\AuthorAddTemplate' => 1,
+    'App\\Presentation\\Category\\CategoryAddTemplate' => 1,
+    'App\\Presentation\\Search\\SearchDefaultTemplate' => 1,
   ),
   2 => 
   array (
