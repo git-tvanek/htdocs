@@ -10,7 +10,10 @@ use App\Collection\PaginatedCollection;
 use App\Repository\Interface\IReviewRepository;
 use App\Repository\Interface\IAddonRepository;
 use Nette\Database\Explorer;
-
+use Nette\Database\Connection;
+use Nette\Database\Structure;
+use Nette\Caching\Storage;
+use Nette\Database\Conventions\DiscoveredConventions;
 /**
  * @extends BaseRepository<AddonReview>
  * @implements ReviewRepositoryInterface
@@ -20,9 +23,14 @@ class ReviewRepository extends BaseRepository implements IReviewRepository
     /** @var IAddonRepository */
     private IAddonRepository $addonRepository;
 
-    public function __construct(Explorer $database, IAddonRepository $addonRepository)
+    public function __construct(Connection $connection, IAddonRepository $addonRepository, Storage $cacheStorage)
     {
-        parent::__construct($database);
+        // Vytvoření Explorer instance z Connection
+        $structure = new Structure($connection, $cacheStorage);
+        $conventions = new DiscoveredConventions($structure);
+        $explorer = new Explorer($connection, $structure, $conventions, $cacheStorage);
+        
+        parent::__construct($explorer);
         $this->tableName = 'addon_reviews';
         $this->entityClass = AddonReview::class;
         $this->addonRepository = $addonRepository;

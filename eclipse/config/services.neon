@@ -10,7 +10,7 @@ services:
     categoryRepository:
         factory: App\Repository\CategoryRepository
     reviewRepository:
-        class: App\Repository\ReviewRepository(@nette.database.explorer, @addonRepository)
+        class: App\Repository\ReviewRepository(@database.default, @addonRepository)
     tagRepository:
         factory: App\Repository\TagRepository
 
