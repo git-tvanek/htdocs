@@ -2,17 +2,17 @@ services:
     # Router factory
     - App\Core\RouterFactory::createRouter
 
-    # Repositories - these are standard services, not factories
+    # Repositories - definované jako továrny kvůli závislostem
     addonRepository:
-        class: App\Repository\AddonRepository
+        factory: App\Repository\AddonRepository
     authorRepository:
-        class: App\Repository\AuthorRepository
+        factory: App\Repository\AuthorRepository
     categoryRepository:
-        class: App\Repository\CategoryRepository
+        factory: App\Repository\CategoryRepository
     reviewRepository:
-        class: App\Repository\ReviewRepository((@nette.database.explorer, @addonRepository)
+        factory: App\Repository\ReviewRepository(@nette.database.explorer, @addonRepository)
     tagRepository:
-        class: App\Repository\TagRepository
+        factory: App\Repository\TagRepository
 
     # Factories as classes
     addonFactory:
@@ -40,19 +40,19 @@ services:
 
     # Services
     addonService:
-        class: App\Service\AddonService(@addonRepository, @addonFactory, @screenshotFactory, %uploadsDir%)
+        factory: App\Service\AddonService(@addonRepository, @addonFactory, @screenshotFactory, %uploadsDir%)
     authorService:
-        class: App\Service\AuthorService(@authorRepository, @authorFactory)
+        factory: App\Service\AuthorService(@authorRepository, @authorFactory)
     categoryService:
-        class: App\Service\CategoryService(@categoryRepository, @categoryFactory)
+        factory: App\Service\CategoryService(@categoryRepository, @categoryFactory)
     reviewService:
-        class: App\Service\ReviewService(@reviewRepository, @reviewFactory)
+        factory: App\Service\ReviewService(@reviewRepository, @reviewFactory)
     searchService:
-        class: App\Service\SearchService(@addonRepository, @authorRepository, @tagRepository, @categoryRepository)
+        factory: App\Service\SearchService(@addonRepository, @authorRepository, @tagRepository, @categoryRepository)
     statisticsService:
-        class: App\Service\StatisticsService(@addonRepository, @authorRepository, @categoryRepository, @reviewRepository, @database.default)
+        factory: App\Service\StatisticsService(@addonRepository, @authorRepository, @categoryRepository, @reviewRepository, @database.default)
     tagService:
-        class: App\Service\TagService(@tagRepository, @tagFactory)
+        factory: App\Service\TagService(@tagRepository, @tagFactory)
 
     # Alias service interfaces to their implementations
     addonServiceAlias:
@@ -125,7 +125,6 @@ services:
     - App\Facade\SearchFacade
     - App\Facade\StatisticsFacade
     - App\Facade\TagFacade
-
 
 search:
     - in: %appDir%
