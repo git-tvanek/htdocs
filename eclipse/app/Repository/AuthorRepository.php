@@ -351,16 +351,16 @@ class AuthorRepository extends BaseRepository implements IAuthorRepository
                 ";
                 break;
                 
-            case 'downloads':
-                $query = "
-                    SELECT au.id, au.name, SUM(a.downloads_count) as total_downloads
-                    FROM authors au
-                    JOIN addons a ON au.id = a.author_id
-                    GROUP BY au.id, au.name
-                    ORDER BY total_downloads DESC
-                    LIMIT ?
-                ";
-                break;
+                case 'downloads':
+                    $query = "
+                        SELECT au.id, au.name, COUNT(a.id) as addon_count, SUM(a.downloads_count) as total_downloads
+                        FROM authors au
+                        JOIN addons a ON au.id = a.author_id
+                        GROUP BY au.id, au.name
+                        ORDER BY total_downloads DESC
+                        LIMIT ?
+                    ";
+                    break;
                 
             case 'rating':
                 $query = "

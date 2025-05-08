@@ -116,6 +116,34 @@ class AuthorPresenter extends BasePresenter
         // Set form defaults
         $this['authorForm']->setDefaults($author->toArray());
     }
+
+    /**
+     * Delete action - delete an author
+     */
+public function renderDelete(int $id): void
+{
+    // Check if user is logged in (in a real app)
+    // if (!$this->getUser()->isLoggedIn()) {
+    //     $this->flashMessage('You must be logged in to delete an author', 'danger');
+    //     $this->redirect('Sign:in');
+    // }
+    
+    try {
+        // Delete author
+        $result = $this->authorFacade->deleteAuthor($id);
+        
+        if ($result) {
+            $this->flashMessage('Autor byl úspěšně smazán', 'success');
+        } else {
+            $this->flashMessage('Autora se nepodařilo smazat', 'danger');
+        }
+    } catch (\Exception $e) {
+        $this->flashMessage('Chyba při mazání autora: ' . $e->getMessage(), 'danger');
+    }
+    
+    // Redirect to author list
+    $this->redirect('Author:default');
+}
     
     /**
      * Component factory for the author form
