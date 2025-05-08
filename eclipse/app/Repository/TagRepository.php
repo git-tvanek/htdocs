@@ -136,31 +136,35 @@ class TagRepository extends BaseRepository implements ITagRepository
      * @return PaginatedCollection<Addon>
      */
     public function findAddonsByTag(int $tagId, int $page = 1, int $itemsPerPage = 10): PaginatedCollection
-    {
-        $selection = $this->database->table('addons')
-            ->select('addons.*')
-            ->joinWhere('addon_tags', 'addons.id = addon_tags.addon_id')
-            ->where('addon_tags.tag_id', $tagId)
-            ->order('addons.name ASC');
-        
-        $count = $selection->count();
-        $pages = (int) ceil($count / $itemsPerPage);
-        
-        $selection->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
-        
-        $items = [];
-        foreach ($selection as $row) {
-            $items[] = Addon::fromArray($row->toArray());
-        }
-        
-        return new PaginatedCollection(
-            new Collection($items),
-            $count,
-            $page,
-            $itemsPerPage,
-            $pages
-        );
+{
+    // Get the addon IDs that have the specified tag
+    $addonIds = $this->database->table('addon_tags')
+        ->where('tag_id', $tagId)
+        ->select('addon_id');
+    
+    // Find addons with those IDs
+    $selection = $this->database->table('addons')
+        ->where('id IN ?', $addonIds)
+        ->order('name ASC');
+    
+    $count = $selection->count();
+    $pages = (int) ceil($count / $itemsPerPage);
+    
+    $selection->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
+    
+    $items = [];
+    foreach ($selection as $row) {
+        $items[] = Addon::fromArray($row->toArray());
     }
+    
+    return new PaginatedCollection(
+        new Collection($items),
+        $count,
+        $page,
+        $itemsPerPage,
+        $pages
+    );
+}
 
     /**
      * Find tags with advanced filtering
@@ -263,9 +267,20 @@ class TagRepository extends BaseRepository implements ITagRepository
     public function findRelatedTags(int $tagId, int $limit = 10): array
     {
         // Find addons that have the specified tag
-        $addonIds = $this->database->table('addon_tags')
+        $addonIdsQuery = $this->database->table('addon_tags')
             ->where('tag_id', $tagId)
             ->select('addon_id');
+        
+        // Convert the Selection to an array of IDs
+        $addonIds = [];
+        foreach ($addonIdsQuery as $row) {
+            $addonIds[] = $row->addon_id;
+        }
+        
+        // If no addon IDs found, return empty array
+        if (empty($addonIds)) {
+            return [];
+        }
         
         // Find other tags used by those addons, excluding the original tag
         $result = $this->database->query("

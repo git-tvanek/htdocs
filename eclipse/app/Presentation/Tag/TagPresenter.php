@@ -118,6 +118,36 @@ class TagPresenter extends BasePresenter
         // Set form defaults
         $this['tagForm']->setDefaults($tag->toArray());
     }
+
+    /**
+ * Smaže tag
+ *
+ * @param int $id
+ */
+public function renderDelete(int $id): void
+{
+    // Check if user is logged in (in a real app)
+    // if (!$this->getUser()->isLoggedIn()) {
+    //     $this->flashMessage('Pro smazání tagu musíte být přihlášen', 'danger');
+    //     $this->redirect('Sign:in');
+    // }
+    
+    try {
+        // Pokus o smazání tagu
+        $result = $this->tagFacade->deleteTag($id);
+        
+        if ($result) {
+            $this->flashMessage('Tag byl úspěšně smazán', 'success');
+        } else {
+            $this->flashMessage('Tag se nepodařilo smazat', 'danger');
+        }
+    } catch (\Exception $e) {
+        $this->flashMessage('Chyba při mazání tagu: ' . $e->getMessage(), 'danger');
+    }
+    
+    // Přesměrování zpět na seznam tagů
+    $this->redirect('Tag:default');
+}
     
     /**
      * Component factory for the tag form
