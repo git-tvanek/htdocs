@@ -184,6 +184,36 @@ class AddonPresenter extends BasePresenter
         // Set form defaults
         $this['addonForm']->setDefaults($addon['addon']->toArray());
     }
+
+    /**
+    * Delete action - delete an addon
+     * 
+    * @param int $id
+    */
+    public function renderDelete(int $id): void
+    {
+        // V reálné aplikaci by zde měla být kontrola přihlášení
+        // if (!$this->getUser()->isLoggedIn()) {
+        //     $this->flashMessage('Pro smazání doplňku musíte být přihlášen', 'danger');
+        //     $this->redirect('Sign:in');
+        // }
+    
+        try {
+        // Smazání doplňku
+            $result = $this->addonFacade->deleteAddon($id);
+        
+            if ($result) {
+                $this->flashMessage('Doplněk byl úspěšně smazán', 'success');
+            } else {
+                $this->flashMessage('Doplněk se nepodařilo smazat', 'danger');
+            }
+        } catch (\Exception $e) {
+            $this->flashMessage('Chyba při mazání doplňku: ' . $e->getMessage(), 'danger');
+        }
+    
+        // Přesměrování na seznam doplňků
+        $this->redirect('Addon:default');
+    }
     
     /**
      * Download action - increase download count and redirect to download URL

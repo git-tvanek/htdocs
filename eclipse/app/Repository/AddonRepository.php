@@ -388,16 +388,18 @@ public function updateWithRelated(Addon $addon, array $screenshots = [], array $
             $screenshots[] = \App\Model\Screenshot::fromArray($screenshotRow->toArray());
         }
         
-        // Get tags
+       // Get tags
+        $tagIds = $this->database->table('addon_tags')
+            ->where('addon_id', $id)
+            ->select('tag_id');
+
         $tagRows = $this->database->table('tags')
-            ->select('tags.*')
-            ->joinWhere('addon_tags', 'tags.id = addon_tags.tag_id')
-            ->where('addon_tags.addon_id', $id);
-        
+            ->where('id IN ?', $tagIds);
+
         $tags = [];
         foreach ($tagRows as $tagRow) {
             $tags[] = \App\Model\Tag::fromArray($tagRow->toArray());
-        }
+            }
         
         // Get reviews
         $reviewRows = $this->database->table('addon_reviews')
@@ -479,16 +481,19 @@ public function updateWithRelated(Addon $addon, array $screenshots = [], array $
 
         // Find addons with similar tags and same category
         $query = "
-            SELECT a.*, 
-                   COUNT(DISTINCT at.tag_id) AS matching_tags,
-                   (a.category_id = ?) AS same_category
+            SELECT s.*
+            FROM (
+                SELECT a.*, 
+                        COUNT(DISTINCT at.tag_id) AS matching_tags,
+                        (a.category_id = ?) AS same_category
             FROM addons a
-            JOIN addon_tags at ON a.id = at.addon_id
-            WHERE at.tag_id IN (?) AND a.id != ?
-            GROUP BY a.id
-            ORDER BY (same_category * 2 + matching_tags) DESC, a.downloads_count DESC
-            LIMIT ?
-        ";
+                JOIN addon_tags at ON a.id = at.addon_id
+                WHERE at.tag_id IN (?) AND a.id != ?
+                GROUP BY a.id
+                ) AS s
+                ORDER BY (s.same_category * 2 + s.matching_tags) DESC, s.downloads_count DESC
+                LIMIT ?
+                ";
 
         $result = $this->database->query($query, $addon->category_id, $tagIds, $addonId, $limit);
 
