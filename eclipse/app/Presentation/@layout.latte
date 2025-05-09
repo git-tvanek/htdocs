@@ -49,15 +49,57 @@
                             <i class="fas fa-tags me-1"></i> Tagy
                         </a>
                     </li>
+                    
+                    {* Zobrazení sekce pro administrátory - pouze pokud má uživatel roli admin *}
+                    {if $userLoggedIn && isset($isAdmin) && $isAdmin}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cogs me-1"></i> Administrace
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li><a class="dropdown-item" href="{link Dashboard:}"><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{link Dashboard:addonStats}"><i class="fas fa-chart-line me-1"></i> Statistiky doplňků</a></li>
+                                <li><a class="dropdown-item" href="{link Dashboard:categoryStats}"><i class="fas fa-chart-pie me-1"></i> Statistiky kategorií</a></li>
+                                <li><a class="dropdown-item" href="{link Dashboard:authorStats}"><i class="fas fa-user-chart me-1"></i> Statistiky autorů</a></li>
+                                <li><a class="dropdown-item" href="{link Dashboard:reviewStats}"><i class="fas fa-star me-1"></i> Statistiky recenzí</a></li>
+                            </ul>
+                        </li>
+                    {/if}
                 </ul>
                 
-                <form class="d-flex" action="{link Search:}" method="get">
+                <form class="d-flex me-3" action="{link Search:}" method="get">
                     <input class="form-control me-2" type="search" name="query" placeholder="Hledat doplňky..." 
                            value="{$presenter->getParameter('query')}">
                     <button class="btn btn-light" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
+                
+                {* Zobrazení přihlášeného uživatele nebo přihlašovacího tlačítka *}
+                {if $userLoggedIn}
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {$user->identity->username ?? 'Uživatel'}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{link User:profile}"><i class="fas fa-user me-1"></i> Můj profil</a></li>
+                            <li><a class="dropdown-item" href="{link User:myAddons}"><i class="fas fa-cube me-1"></i> Moje doplňky</a></li>
+                            <li><a class="dropdown-item" href="{link User:myReviews}"><i class="fas fa-star me-1"></i> Moje recenze</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{link Sign:out}"><i class="fas fa-sign-out-alt me-1"></i> Odhlásit se</a></li>
+                        </ul>
+                    </div>
+                {else}
+                    <div class="d-flex">
+                        <a href="{link Sign:in}" class="btn btn-outline-light me-2">
+                            <i class="fas fa-sign-in-alt me-1"></i> Přihlásit
+                        </a>
+                        <a href="{link Sign:up}" class="btn btn-light">
+                            <i class="fas fa-user-plus me-1"></i> Registrovat
+                        </a>
+                    </div>
+                {/if}
             </div>
         </div>
     </nav>

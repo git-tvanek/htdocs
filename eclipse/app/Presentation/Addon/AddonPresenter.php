@@ -39,12 +39,6 @@ class AddonPresenter extends BasePresenter
     /** @var ReviewFormFactory */
     private ReviewFormFactory $reviewFormFactory;
     
-    /** @var int|null */
-    private ?int $userId = null;
-    
-    /** @var bool */
-    private bool $userLoggedIn = false;
-    
     /**
      * Constructor
      */
@@ -64,10 +58,6 @@ class AddonPresenter extends BasePresenter
         $this->reviewFacade = $reviewFacade;
         $this->addonFormFactory = $addonFormFactory;
         $this->reviewFormFactory = $reviewFormFactory;
-        
-        // In a real application, you would get these from a user service/authentication
-        $this->userId = null;
-        $this->userLoggedIn = false;
     }
     
     /**
@@ -134,8 +124,19 @@ class AddonPresenter extends BasePresenter
         
         $this->template->addon = $addon;
         
-        // Check if the user has already reviewed this add-on (in a real app)
+        // Check if the user has already reviewed this add-on
         $this->template->userHasReviewed = false;
+        
+        // Kontrola oprávnění pro editaci a mazání
+        if ($this->userLoggedIn) {
+            $isOwner = $addon['addon']->author_id === $this->currentUserId;
+            $canEdit = $isOwner || $this->authorizationFacade->isAllowed($this->currentUserId, 'addon', 'edit');
+            $canDelete = $isOwner || $this->authorizationFacade->isAllowed($this->currentUserId, 'addon', 'delete');
+            
+            $this->template->canEdit = $canEdit;
+            $this->template->canDelete = $canDelete;
+            $this->template->isOwner = $isOwner;
+        }
         
         // Set title
         $this->template->title = $addon['addon']->name;
@@ -146,11 +147,8 @@ class AddonPresenter extends BasePresenter
      */
     public function renderAdd(): void
     {
-        // Check if user is logged in (in a real app)
-        // if (!$this->userLoggedIn) {
-        //     $this->flashMessage('You must be logged in to add an add-on', 'danger');
-        //     $this->redirect('Sign:in');
-        // }
+        // Kontrola oprávnění
+        $this->checkPermission('addon', 'add');
         
         $this->template->title = 'Add New Add-on';
     }
@@ -160,23 +158,23 @@ class AddonPresenter extends BasePresenter
      */
     public function renderEdit(int $id): void
     {
-        // Check if user is logged in (in a real app)
-        // if (!$this->userLoggedIn) {
-        //     $this->flashMessage('You must be logged in to edit an add-on', 'danger');
-        //     $this->redirect('Sign:in');
-        // }
-        
         // Get add-on by ID
         $addon = $this->addonFacade->getAddonDetail($id);
         if (!$addon) {
             $this->error('Add-on not found');
         }
         
-        // Check if user is the author (in a real app)
-        // if ($addon['addon']->author_id !== $this->userId) {
-        //     $this->flashMessage('You can only edit your own add-ons', 'danger');
-        //     $this->redirect('Addon:detail', $addon['addon']->slug);
-        // }
+        // Kontrola oprávnění - může editovat vlastník nebo uživatel s oprávněním 'edit'
+        $isOwner = $addon['addon']->author_id === $this->currentUserId;
+        if (!$isOwner) {
+            $this->checkPermission('addon', 'edit');
+        } else {
+            // Kontrola, že je uživatel přihlášen
+            if (!$this->userLoggedIn) {
+                $this->flashMessage('Pro úpravu doplňku musíte být přihlášen', 'danger');
+                $this->redirect('Sign:in', ['backlink' => $this->storeRequest()]);
+            }
+        }
         
         $this->template->addon = $addon;
         $this->template->title = 'Edit Add-on: ' . $addon['addon']->name;
@@ -186,20 +184,32 @@ class AddonPresenter extends BasePresenter
     }
 
     /**
-    * Delete action - delete an addon
+     * Delete action - delete an addon
      * 
-    * @param int $id
-    */
+     * @param int $id
+     */
     public function renderDelete(int $id): void
     {
-        // V reálné aplikaci by zde měla být kontrola přihlášení
-        // if (!$this->getUser()->isLoggedIn()) {
-        //     $this->flashMessage('Pro smazání doplňku musíte být přihlášen', 'danger');
-        //     $this->redirect('Sign:in');
-        // }
+        // Get add-on by ID
+        $addon = $this->addonFacade->getAddonDetail($id);
+        if (!$addon) {
+            $this->error('Add-on not found');
+        }
+        
+        // Kontrola oprávnění - může smazat vlastník nebo uživatel s oprávněním 'delete'
+        $isOwner = $addon['addon']->author_id === $this->currentUserId;
+        if (!$isOwner) {
+            $this->checkPermission('addon', 'delete');
+        } else {
+            // Kontrola, že je uživatel přihlášen
+            if (!$this->userLoggedIn) {
+                $this->flashMessage('Pro smazání doplňku musíte být přihlášen', 'danger');
+                $this->redirect('Sign:in', ['backlink' => $this->storeRequest()]);
+            }
+        }
     
         try {
-        // Smazání doplňku
+            // Smazání doplňku
             $result = $this->addonFacade->deleteAddon($id);
         
             if ($result) {
@@ -279,8 +289,8 @@ class AddonPresenter extends BasePresenter
             $this->flashMessage('Add-on updated successfully', 'success');
         } else {
             // Create new add-on
-            // In a real app, you would set the author ID to the current user
-            $data['author_id'] = $data['author_id'] ?? 1;
+            // Nastavíme author_id na ID přihlášeného uživatele
+            $data['author_id'] = $this->currentUserId ?? 1;
             
             $addonId = $this->addonFacade->createAddon($data, $files);
             $this->flashMessage('Add-on created successfully', 'success');
@@ -307,7 +317,7 @@ class AddonPresenter extends BasePresenter
             }
         }
         
-        $form = $this->reviewFormFactory->create($this->userLoggedIn, $this->userId);
+        $form = $this->reviewFormFactory->create($this->userLoggedIn, $this->currentUserId);
         
         // Set callback for form processing
         $form->onSuccess[] = function (Form $form, array $data) {
@@ -323,11 +333,11 @@ class AddonPresenter extends BasePresenter
     private function processReviewForm(Form $form, array $data): void
     {
         // Create review
-        if ($this->userLoggedIn && $this->userId) {
+        if ($this->userLoggedIn && $this->currentUserId) {
             // Create review from logged-in user
             $this->reviewFacade->createUserReview(
                 $data['addon_id'],
-                $this->userId,
+                $this->currentUserId,
                 $data['rating'],
                 $data['comment'] ?? null
             );

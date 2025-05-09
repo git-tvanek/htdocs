@@ -39,15 +39,22 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <h1 class="mb-3">{$addon['addon']->name}</h1>
                             
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="addonActions" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="addonActions">
-                                    <li><a class="dropdown-item" href="{link Addon:edit, $addon['addon']->id}"><i class="fas fa-edit me-1"></i> Upravit</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAddonModal"><i class="fas fa-trash me-1"></i> Smazat</a></li>
-                                </ul>
-                            </div>
+                            {* Zobrazit dropdown menu jen pokud má uživatel oprávnění *}
+                            {if $userLoggedIn && ($canEdit || $canDelete)}
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="addonActions" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="addonActions">
+                                        {if $canEdit}
+                                            <li><a class="dropdown-item" href="{link Addon:edit, $addon['addon']->id}"><i class="fas fa-edit me-1"></i> Upravit</a></li>
+                                        {/if}
+                                        {if $canDelete}
+                                            <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAddonModal"><i class="fas fa-trash me-1"></i> Smazat</a></li>
+                                        {/if}
+                                    </ul>
+                                </div>
+                            {/if}
                         </div>
                         
                         <div class="mb-3">
@@ -232,13 +239,16 @@
                                     </div>
                                 </div>
                                 
-                                {if $review->user_id && $review->user_id == $presenter->getUser()->getId()}
+                                {* Zobrazit možnosti editace recenze jen pokud je přihlášený uživatel vlastníkem recenze nebo má roli admin *}
+                                {if $userLoggedIn && ($review->user_id == $currentUserId || $isAdmin)}
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="{link Review:edit, $review->id}"><i class="fas fa-edit me-1"></i> Upravit</a></li>
+                                            {if $review->user_id == $currentUserId}
+                                                <li><a class="dropdown-item" href="{link Review:edit, $review->id}"><i class="fas fa-edit me-1"></i> Upravit</a></li>
+                                            {/if}
                                             <li><a class="dropdown-item text-danger" href="{link Review:delete, $review->id}" onclick="return confirm('Opravdu chcete smazat tuto recenzi?');"><i class="fas fa-trash me-1"></i> Smazat</a></li>
                                         </ul>
                                     </div>
@@ -334,22 +344,25 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteAddonModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Potvrdit smazání</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Opravdu chcete smazat doplněk <strong>{$addon['addon']->name}</strong>? Tato akce je nevratná.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
-                <a href="{link Addon:delete, $addon['addon']->id}" class="btn btn-danger">Smazat doplněk</a>
+{* Modal pro smazání se zobrazí jen pokud má uživatel oprávnění *}
+{if $userLoggedIn && $canDelete}
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteAddonModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Potvrdit smazání</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Opravdu chcete smazat doplněk <strong>{$addon['addon']->name}</strong>? Tato akce je nevratná.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                    <a href="{link Addon:delete, $addon['addon']->id}" class="btn btn-danger">Smazat doplněk</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+{/if}
 {/block}
