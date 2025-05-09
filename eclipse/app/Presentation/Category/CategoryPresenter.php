@@ -125,6 +125,34 @@ class CategoryPresenter extends BasePresenter
         // Set form defaults
         $this['categoryForm']->setDefaults($category->toArray());
     }
+
+    /**
+    * Delete action - remove a category
+    */
+    public function renderDelete(int $id): void
+    {
+    // Check if user is logged in (in a real app)
+    // if (!$this->getUser()->isLoggedIn()) {
+    //     $this->flashMessage('Pro smazání kategorie musíte být přihlášen', 'danger');
+    //     $this->redirect('Sign:in');
+    // }
+    
+        try {
+            // Delete the category
+            $result = $this->categoryFacade->deleteCategory($id);
+        
+            if ($result) {
+                $this->flashMessage('Kategorie byla úspěšně smazána', 'success');
+            } else {
+                $this->flashMessage('Kategorii se nepodařilo smazat', 'danger');
+            }
+        } catch (\Exception $e) {
+            $this->flashMessage('Chyba při mazání kategorie: ' . $e->getMessage(), 'danger');
+    }
+    
+    // Redirect to category list
+    $this->redirect('Category:default');
+    }
     
     /**
      * Component factory for the category form
