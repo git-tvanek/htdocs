@@ -77,7 +77,8 @@ class SearchForm
             4 => '4+ hvězdiček',
             3 => '3+ hvězdiček',
             2 => '2+ hvězdiček',
-            1 => '1+ hvězdička'
+            1 => '1+ hvězdička',
+            0 => '0 hvězdiček'  
         ])->setPrompt('-- Bez omezení --');
         
         // Verze Kodi
@@ -104,8 +105,14 @@ class SearchForm
         
         // Předvyplnění formuláře
         if (!empty($defaults)) {
-            $form->setDefaults($defaults);
+        // Upravit neplatné hodnoty
+            if (isset($defaults['min_rating']) && $defaults['min_rating'] === 0) {
+                $defaults['min_rating'] = null; // Změnit 0 na null pro "Bez omezení"       
+            }
+        $form->setDefaults($defaults);
+
         }
+
         
         // Zpracování formuláře
         $form->onSuccess[] = function (Form $form, ArrayHash $values) {
