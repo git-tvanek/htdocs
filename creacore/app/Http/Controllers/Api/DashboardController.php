@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Spatie\Activitylog\Models\Activity;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
