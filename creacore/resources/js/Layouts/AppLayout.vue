@@ -310,9 +310,7 @@ const logout = () => {
                                                     </svg>
                                                     <div>{{ team.name }}</div>
                                                 </div>
-                            
-
- ResponsiveNavLink>
+                                            </ResponsiveNavLink>
                                         </form>
                                     </template>
                                 </template>
