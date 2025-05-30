@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import Chart from 'chart.js/auto';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -343,9 +344,3 @@ const getActivityColor = (activity) => {
         </div>
     </AppLayout>
 </template>
-
-<style>
-@import 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css';
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
