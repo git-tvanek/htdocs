@@ -73,7 +73,7 @@ class FortifyServiceProvider extends ServiceProvider
                ->middleware(['auth:sanctum', 'can:viewAny,App\\Models\\User'])
                ->group(function () use ($router) {
                    $router->get('users/search', SearchUsers::class);
-                   $router->post('users/{user}/toggle-active', ToggleActiveUser::class);
+                   $router->post('users/{user}/toggle-active', [ToggleActiveUser::class, '__invoke']);
                    $router->post('users/{user}/block', BlockUser::class);
                    $router->post('users/{user}/unblock', UnblockUser::class);
                    $router->post('users/{user}/disable-2fa', DisableTwoFactorAuth::class);

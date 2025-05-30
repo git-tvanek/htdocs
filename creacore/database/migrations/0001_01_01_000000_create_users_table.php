@@ -21,6 +21,14 @@ return new class extends Migration
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
+            $table->boolean('active')->default(true);
+            $table->boolean('blocked')->default(false);
+            $table->boolean('force_password_reset')->default(false);
+            $table->timestamp('last_login_at')->nullable();
+            $table->string('last_login_ip')->nullable();
+
+            $table->index('active');
+            $table->index('blocked');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
